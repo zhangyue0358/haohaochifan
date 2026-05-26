@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>好好吃饭 · App Demo v2</title>
+<style>
+:root{
+  --brand:#2BA76A;--brand-dark:#1A7A4C;--brand-mid:#6DCCA0;
+  --brand-light:#E8F7F0;--brand-pale:#C2EDD8;
+  --warn-bg:#FEF3E2;--warn-border:#FBBF6A;--warn-text:#92500E;
+  --caution-bg:#FEF0F0;--caution-border:#F6A8A8;--caution-text:#842020;
+  --bg:#ffffff;--bg2:#f5f5f0;--bg3:#eeede8;
+  --t1:#1a1a18;--t2:#6b6b67;--t3:#9a9a96;
+  --bd:rgba(0,0,0,0.1);--bd2:rgba(0,0,0,0.2);
+  --r1:8px;--r2:12px;--r3:16px;
+  --font:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#1C1C1E;--bg2:#2C2C2E;--bg3:#3A3A3C;
+  --t1:#F2F2F7;--t2:#8E8E93;--t3:#636366;
+  --bd:rgba(255,255,255,0.1);--bd2:rgba(255,255,255,0.18);
+  --brand-light:#1A3D2B;--brand-pale:#123526;
+  --warn-bg:#2D1F0A;--caution-bg:#2D0F0F;
+}}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#e8e4dc;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px 0 40px;font-family:var(--font);}
+h1.demo-h{font-size:20px;font-weight:500;color:#085041;margin-bottom:3px;text-align:center;}
+p.demo-p{font-size:12px;color:#2BA76A;text-align:center;margin-bottom:14px;}
+.mnav{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;max-width:780px;padding:0 12px;}
+.mb{padding:6px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:0.5px solid #9FE1CB;background:white;color:#0F6E56;font-weight:500;transition:all .15s;}
+.mb.on{background:#2BA76A;color:white;border-color:#2BA76A;}
+.dw{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:800px;padding:0 12px;}
+.mw{display:none;flex-direction:column;align-items:center;gap:6px;}
+.mw.on{display:flex;}
+.ml{font-size:10px;color:#2BA76A;font-weight:500;letter-spacing:.4px;}
+.phone{width:340px;background:var(--bg);border-radius:28px;border:0.5px solid rgba(0,0,0,0.15);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 28px rgba(0,0,0,0.12);position:relative;}
+.sb{padding:10px 16px 4px;display:flex;justify-content:space-between;flex-shrink:0;}
+.sb span{font-size:11px;color:var(--t2);}
+.sc{display:none;flex-direction:column;min-height:570px;}
+.sc.on{display:flex;}
+.scroll{flex:1;overflow-y:auto;}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:var(--brand-pale);border-radius:2px;}
+@keyframes fsu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes fi{from{opacity:0;}to{opacity:1;}}
+@keyframes su{from{transform:translateY(100%);}to{transform:translateY(0);}}
+@keyframes pi{0%{transform:scale(.8);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.as{animation:fsu .26s cubic-bezier(.22,.68,0,1.2) both;}
+.d1{animation-delay:.04s;}.d2{animation-delay:.08s;}.d3{animation-delay:.12s;}.d4{animation-delay:.16s;}.d5{animation-delay:.20s;}
+.bp{transition:transform .1s,opacity .1s;}.bp:active{transform:scale(.96);opacity:.88;}
+.card{background:var(--bg);border:0.5px solid var(--bd);border-radius:var(--r2);padding:12px 14px;margin-bottom:10px;}
+.sh{display:flex;align-items:baseline;justify-content:space-between;margin:12px 0 8px;}
+.sh h3{font-size:13px;font-weight:500;color:var(--t1);}
+.sh a{font-size:12px;color:var(--brand);cursor:pointer;}
+.ph{padding:12px 16px 10px;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid var(--bd);flex-shrink:0;}
+.bk{font-size:20px;color:var(--t2);cursor:pointer;line-height:1;}
+.pt{font-size:16px;font-weight:500;color:var(--t1);flex:1;}
+.lg{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:500;}
+.gg{background:var(--brand-light);color:var(--brand-dark);border:0.5px solid var(--brand-pale);}
+.gw{background:var(--warn-bg);color:var(--warn-text);border:0.5px solid var(--warn-border);}
+.gr{background:var(--caution-bg);color:var(--caution-text);border:0.5px solid var(--caution-border);}
+.gb{background:#E6F1FB;color:#0C447C;border:0.5px solid #B5D4F4;}
+.cta{width:100%;padding:13px;background:var(--brand);color:white;border:none;border-radius:var(--r2);font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s;margin-top:16px;}
+.cta:active{opacity:.88;}
+.ctag{width:100%;padding:11px;background:var(--bg2);color:var(--t2);border:0.5px solid var(--bd);border-radius:var(--r2);font-size:13px;cursor:pointer;margin-top:8px;}
+.ab{width:28px;height:28px;border-radius:50%;background:var(--brand);border:none;cursor:pointer;color:white;font-size:18px;display:flex;align-items:center;justify-content:center;transition:transform .1s;flex-shrink:0;}
+.ab:active{transform:scale(.88);}
+input[type=range]{width:100%;accent-color:var(--brand);border:none;background:none;cursor:pointer;padding:0;}
+.bnav{display:flex;border-top:0.5px solid var(--bd);padding:8px 0 14px;flex-shrink:0;background:var(--bg);}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:3px;}
+.ni .ico{font-size:19px;line-height:1;}
+.ni .lbl{font-size:10px;color:var(--t2);}
+.ni.on .lbl{color:var(--brand);font-weight:500;}
+.cb{padding:8px 16px 12px;border-top:0.5px solid var(--bd);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.cw{width:38px;height:38px;background:var(--brand);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;position:relative;cursor:pointer;flex-shrink:0;}
+.cbg{position:absolute;top:-4px;right:-4px;width:16px;height:16px;background:#E24B4A;border-radius:50%;font-size:9px;color:white;display:flex;align-items:center;justify-content:center;font-weight:500;}
+.cob{padding:10px 16px;background:var(--brand);color:white;border:none;border-radius:var(--r2);font-size:13px;font-weight:500;cursor:pointer;}
+/* onboarding */
+.pdots{flex:1;display:flex;justify-content:center;gap:6px;}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--bg2);transition:all .25s;}
+.pdot.done{background:var(--brand-mid);}
+.pdot.on{width:18px;border-radius:3px;background:var(--brand);}
+.pwrap{padding:14px 16px 0;display:flex;align-items:center;gap:10px;}
+.pback{font-size:20px;cursor:pointer;color:var(--t2);line-height:1;flex-shrink:0;}
+.pskip{font-size:12px;color:var(--t2);cursor:pointer;flex-shrink:0;}
+.obody{flex:1;padding:22px 20px 20px;display:flex;flex-direction:column;}
+.slbl{font-size:11px;font-weight:500;color:var(--brand);letter-spacing:.5px;margin-bottom:8px;}
+.stit{font-size:22px;font-weight:500;color:var(--t1);line-height:1.25;margin-bottom:6px;}
+.ssub{font-size:13px;color:var(--t2);margin-bottom:24px;line-height:1.55;}
+.og{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:auto;}
+.oo{padding:14px 12px 12px;border-radius:14px;border:0.5px solid var(--bd);background:var(--bg);cursor:pointer;text-align:center;transition:all .15s;}
+.oo.sel{border-color:var(--brand);background:var(--brand-light);}
+.oo .oi{font-size:24px;margin-bottom:6px;line-height:1;}
+.oo .on2{font-size:13px;font-weight:500;color:var(--t1);}
+.oo .od{font-size:11px;color:var(--t2);margin-top:3px;}
+.oo.sel .on2{color:var(--brand-dark);}
+.fg{display:flex;flex-direction:column;gap:14px;margin-bottom:auto;}
+.fl{font-size:12px;color:var(--t2);margin-bottom:5px;font-weight:500;}
+.gr2{display:flex;gap:8px;}
+.gb2{flex:1;padding:10px;border-radius:10px;border:0.5px solid var(--bd);text-align:center;cursor:pointer;font-size:13px;font-weight:500;color:var(--t2);background:var(--bg);}
+.gb2.sel{border-color:var(--brand);background:var(--brand-light);color:var(--brand-dark);}
+.tgg{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.tg{padding:8px 14px;border-radius:20px;font-size:12px;font-weight:500;border:0.5px solid var(--bd);cursor:pointer;color:var(--t2);background:var(--bg);transition:all .15s;}
+.tg.sel{background:var(--brand-light);color:var(--brand-dark);border-color:var(--brand-mid);}
+.nt{width:100%;text-align:center;padding:10px;border-radius:10px;border:0.5px solid var(--bd);font-size:13px;color:var(--t2);cursor:pointer;background:var(--bg2);}
+.nt.sel{background:var(--brand-light);color:var(--brand-dark);border-color:var(--brand-mid);}
+.ww{flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 24px 24px;}
+.hm{width:72px;height:72px;border-radius:22px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:22px;}
+.ht{font-size:26px;font-weight:500;color:var(--t1);text-align:center;line-height:1.25;margin-bottom:10px;}
+.hs{font-size:14px;color:var(--t2);text-align:center;line-height:1.65;margin-bottom:28px;}
+.bl{width:100%;display:flex;flex-direction:column;gap:8px;margin-bottom:32px;}
+.br{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg2);border-radius:12px;}
+.dw2{flex:1;display:flex;flex-direction:column;align-items:center;padding:24px 20px;}
+.dc{width:68px;height:68px;border-radius:50%;background:var(--brand-light);border:2px solid var(--brand-mid);display:flex;align-items:center;justify-content:center;font-size:28px;margin:8px auto 18px;animation:pi .4s cubic-bezier(.22,.68,0,1.2) .1s both;}
+.pc{width:100%;background:var(--brand-light);border-radius:14px;padding:14px 16px;margin-bottom:12px;border:0.5px solid var(--brand-pale);}
+.pr{display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--brand-pale);}
+.pr:last-child{border-bottom:none;}
+.an{width:100%;background:var(--bg2);border-radius:14px;padding:12px 14px;margin-bottom:8px;border:0.5px solid var(--bd);display:flex;gap:12px;align-items:center;cursor:pointer;}
+.ai2{width:40px;height:40px;border-radius:10px;background:white;border:0.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+/* 首页 */
+.greet{padding:14px 16px 10px;display:flex;align-items:center;justify-content:space-between;}
+.av{width:34px;height:34px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--brand-dark);cursor:pointer;}
+.nb{width:34px;height:34px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:15px;cursor:pointer;position:relative;}
+.nd{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:#E24B4A;border:1.5px solid var(--bg);}
+.tc{margin:0 16px 12px;background:var(--brand);border-radius:18px;padding:16px;color:white;position:relative;overflow:hidden;}
+.tcb{position:absolute;right:-10px;top:-10px;font-size:88px;opacity:.08;line-height:1;}
+.trw{position:relative;width:56px;height:56px;flex-shrink:0;}
+.trw svg{width:56px;height:56px;}
+.trt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:12px;font-weight:500;color:white;text-align:center;}
+.tcta{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.15);border-radius:12px;padding:10px 14px;cursor:pointer;margin-top:12px;}
+.tci{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.ait{margin:0 16px 12px;padding:9px 12px;background:var(--bg2);border-radius:12px;border:0.5px solid var(--bd);display:flex;align-items:center;gap:8px;}
+.qr{display:flex;gap:8px;margin:0 16px 14px;}
+.qb{flex:1;padding:12px 8px;border-radius:14px;border:0.5px solid var(--bd);background:var(--bg);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:5px;transition:all .15s;}
+.qb:active{background:var(--bg2);}
+.qi{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.mh{margin:0 16px 6px;display:flex;gap:10px;padding:12px;background:var(--brand-light);border-radius:14px;border:0.5px solid var(--brand-pale);cursor:pointer;}
+.mht{width:52px;height:52px;border-radius:10px;background:white;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.mm{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;margin-bottom:6px;cursor:pointer;}
+.mma{width:22px;height:22px;border-radius:50%;background:var(--bg2);border:0.5px solid var(--bd2);font-size:14px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t2);}
+.rs{display:flex;gap:8px;overflow-x:auto;padding:0 16px 4px;scrollbar-width:none;}
+.rs::-webkit-scrollbar{display:none;}
+.rc2{flex-shrink:0;width:108px;border-radius:12px;border:0.5px solid var(--bd);overflow:hidden;cursor:pointer;background:var(--bg);}
+.ri{height:58px;display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;}
+.rscore{position:absolute;bottom:4px;right:4px;font-size:9px;padding:1px 5px;border-radius:20px;font-weight:500;}
+.shi{background:var(--brand);color:white;}
+.smi{background:#EF9F27;color:white;}
+.skbar{margin:12px 16px 0;padding:10px 14px;background:var(--bg2);border-radius:12px;border:0.5px solid var(--bd);display:flex;align-items:center;gap:10px;cursor:pointer;}
+.sbd{display:flex;gap:4px;}
+.sdd{width:8px;height:8px;border-radius:50%;background:var(--bd);}
+.sdd.done{background:var(--brand);}
+.sdd.today{background:var(--brand-mid);border:1.5px solid var(--brand);}
+.fmr{display:flex;gap:8px;overflow-x:auto;padding:0 16px 4px;scrollbar-width:none;}
+.fm{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 10px;border-radius:12px;border:0.5px solid var(--bd);background:var(--bg);min-width:62px;cursor:pointer;}
+.fmb{width:100%;height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:2px;}
+.fmf{height:100%;border-radius:2px;}
+/* 餐厅 */
+.fs{display:flex;gap:6px;overflow-x:auto;padding:8px 16px;border-bottom:0.5px solid var(--bd);scrollbar-width:none;}
+.fc{flex-shrink:0;padding:5px 11px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:0.5px solid var(--bd);color:var(--t2);}
+.fc.on{background:var(--brand);color:white;border-color:var(--brand);}
+.fc.sp{background:var(--brand-light);color:var(--brand-dark);border-color:var(--brand-pale);}
+.rcard{margin:0 16px 8px;background:var(--bg);border:0.5px solid var(--bd);border-radius:14px;overflow:hidden;cursor:pointer;}
+.rci{height:78px;display:flex;align-items:center;justify-content:center;font-size:32px;position:relative;}
+.hb{position:absolute;top:8px;right:8px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:500;display:flex;align-items:center;gap:3px;}
+.hhi{background:var(--brand);color:white;}
+.hmi{background:#EF9F27;color:white;}
+.sq{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:50%;font-size:9px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.3);color:white;}
+.sq:hover{background:rgba(255,255,255,.55);}
+.drow{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--bd);}
+.drow:last-child{border-bottom:none;}
+.dth{width:68px;height:68px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;position:relative;}
+.hd{position:absolute;top:-2px;right:-2px;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:500;color:white;}
+.hdg{background:var(--brand);}
+.hda{background:#EF9F27;}
+.hdr{background:#E85D4A;}
+.sp2{display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:500;}
+.spg{background:var(--brand-light);color:var(--brand-dark);border:0.5px solid var(--brand-pale);}
+.spa{background:var(--warn-bg);color:var(--warn-text);border:0.5px solid var(--warn-border);}
+.spr{background:var(--caution-bg);color:var(--caution-text);border:0.5px solid var(--caution-border);}
+.sqg{background:var(--brand-pale);color:var(--brand-dark);}
+.sqa{background:var(--warn-border);color:var(--warn-text);}
+.sqr{background:var(--caution-border);color:var(--caution-text);}
+/* 搜索 */
+.sinp{display:flex;align-items:center;gap:8px;background:var(--bg2);border-radius:12px;padding:10px 14px;border:0.5px solid var(--bd);}
+.sinp input{flex:1;border:none;background:transparent;font-size:14px;color:var(--t1);outline:none;}
+.stag{padding:6px 12px;border-radius:20px;font-size:12px;border:0.5px solid var(--bd);cursor:pointer;color:var(--t1);background:var(--bg);}
+.stag:active{background:var(--brand-light);color:var(--brand-dark);}
+/* 空状态 */
+.eh{display:flex;flex-direction:column;align-items:center;padding:32px 24px 20px;text-align:center;}
+.ei{width:96px;height:96px;border-radius:22px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:44px;margin-bottom:18px;border:0.5px solid var(--bd);}
+.sti{display:flex;align-items:flex-start;gap:12px;padding:10px 0;position:relative;}
+.sti:not(:last-child)::after{content:"";position:absolute;left:15px;top:34px;width:1.5px;height:calc(100% - 14px);background:var(--bd);}
+.stn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;z-index:1;}
+.nd2{background:var(--brand);color:white;}
+.na{background:var(--brand-light);border:2px solid var(--brand);color:var(--brand-dark);}
+.ni2{background:var(--bg2);border:1.5px solid var(--bd2);color:var(--t2);}
+.skel{background:linear-gradient(90deg,var(--bg2) 25%,var(--bd) 50%,var(--bg2) 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:6px;}
+.nc{padding:12px 14px;background:var(--bg2);border-radius:14px;border:0.5px solid var(--bd);display:flex;align-items:center;gap:12px;cursor:pointer;}
+.nci{width:38px;height:38px;border-radius:10px;background:white;border:0.5px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.np{height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:4px;}
+.nf{height:100%;background:var(--brand);border-radius:2px;}
+/* 消息 */
+.mi{display:flex;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--bd);cursor:pointer;}
+.mi:last-child{border-bottom:none;}
+.mii{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ud{width:6px;height:6px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:5px;}
+/* 订单 */
+.oc{margin:0 16px 8px;background:var(--bg);border:0.5px solid var(--bd);border-radius:14px;overflow:hidden;}
+.och{padding:10px 14px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.ocb{padding:10px 14px;}
+.ocf{padding:8px 14px;border-top:0.5px solid var(--bd);display:flex;align-items:center;justify-content:space-between;}
+.obt{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;border:0.5px solid var(--bd);background:var(--bg);color:var(--t1);}
+.obp{background:var(--brand);color:white;border-color:var(--brand);}
+.ns{display:flex;align-items:center;gap:5px;padding:4px 8px;background:var(--brand-light);border-radius:6px;margin-top:4px;}
+/* 评分弹层 */
+#gsb{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:9999;display:none;align-items:flex-end;justify-content:center;}
+#gsb.show{display:flex;}
+#gss{background:var(--bg);border-radius:20px 20px 0 0;width:100%;max-width:380px;padding:16px 16px 32px;max-height:82vh;overflow-y:auto;animation:su .28s cubic-bezier(.22,.68,0,1.2);}
+.gsh{width:36px;height:3px;border-radius:2px;background:var(--bd2);margin:0 auto 14px;}
+.dbg{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-bottom:3px;}
+.dbf{height:100%;border-radius:3px;}
+/* 审核 toggle */
+.tgl{width:44px;height:26px;border-radius:13px;background:var(--brand);position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.tgl::after{content:"";position:absolute;right:3px;top:3px;width:20px;height:20px;border-radius:50%;background:white;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.tgl.off{background:var(--bd2);}
+.tgl.off::after{right:auto;left:3px;}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1a1a18;color:white;padding:8px 18px;border-radius:20px;font-size:12px;display:none;white-space:nowrap;z-index:9990;animation:fsu .22s ease;}
+</style>
+</head>
+<body>
+<h1 class="demo-h">🥗 好好吃饭 · App Demo v2</h1>
+<p class="demo-p">好好吃饭 天天向上 · 全面优化版</p>
+<div class="mnav">
+  <div class="mb on" onclick="SM('ob',this)">注册流程</div>
+  <div class="mb" onclick="SM('home',this)">完整首页</div>
+  <div class="mb" onclick="SM('rest',this)">点外卖</div>
+  <div class="mb" onclick="SM('search',this)">搜索</div>
+  <div class="mb" onclick="SM('empty',this)">空状态</div>
+  <div class="mb" onclick="SM('audit',this)">审核等待</div>
+  <div class="mb" onclick="SM('notif',this)">消息中心</div>
+  <div class="mb" onclick="SM('orders',this)">订单历史</div>
+  <div class="mb" onclick="SM('special',this)">特殊人群</div>
+  <div class="mb" onclick="SM('family',this)">家庭账号</div>
+  <div class="mb" onclick="SM('delivery',this)">下单配送</div>
+</div>
+<div class="dw">
+
+<!-- ══ 注册流程 4步 ══ -->
+<div class="mw on" id="mod-ob">
+<div class="ml">注册 · 4步极简入驻</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on" id="ob0">
+<div class="ww">
+<div class="hm">🥗</div><div class="ht">好好吃饭<br>天天向上</div>
+<div class="hs">根据你的身体状况，定制专属健康餐饮方案</div>
+<div class="bl">
+<div class="br"><span style="font-size:16px;">🧬</span><span style="font-size:13px;color:var(--t1);">基于健康档案，<strong style="color:var(--brand-dark);">每道菜都有专属标识</strong></span></div>
+<div class="br"><span style="font-size:16px;">👨‍⚕️</span><span style="font-size:13px;color:var(--t1);">营养师+AI，<strong style="color:var(--brand-dark);">高风险人群人工审核</strong></span></div>
+<div class="br"><span style="font-size:16px;">✅</span><span style="font-size:13px;color:var(--t1);">只做标识，<strong style="color:var(--brand-dark);">选择权永远在你手里</strong></span></div>
+</div>
+<button class="cta bp" style="width:100%;margin-top:0;" onclick="OB(1)">从今天开始，我要好好吃饭！→</button>
+<button class="ctag bp" style="width:100%;">已有账号，登录</button>
+</div>
+</div>
+<div class="sc" id="ob1">
+<div class="pwrap"><div class="pback" onclick="OB(0)">‹</div><div class="pdots"><div class="pdot on"></div><div class="pdot"></div><div class="pdot"></div><div class="pdot"></div></div><div class="pskip" onclick="OB(2)">跳过</div></div>
+<div class="obody">
+<div class="slbl">STEP 1 · 认识你</div><div class="stit">你属于哪类人群？</div><div class="ssub">影响我们为你匹配的营养方案类型</div>
+<div class="og">
+<div class="oo sel bp" onclick="OS(this)"><div class="oi">🧑</div><div class="on2">健康人群</div><div class="od">改善饮食习惯</div></div>
+<div class="oo bp" onclick="OS(this)"><div class="oi">🤰</div><div class="on2">孕妇/产妇</div><div class="od">孕期月子调养</div></div>
+<div class="oo bp" onclick="OS(this)"><div class="oi">🏥</div><div class="on2">慢病调养</div><div class="od">高血压/糖尿病等</div></div>
+<div class="oo bp" onclick="OS(this)"><div class="oi">👴</div><div class="on2">中老年养生</div><div class="od">科学补充营养</div></div>
+</div>
+<button class="cta bp" onclick="OB(2)">下一步 →</button>
+</div>
+</div>
+<div class="sc" id="ob2">
+<div class="pwrap"><div class="pback" onclick="OB(1)">‹</div><div class="pdots"><div class="pdot done"></div><div class="pdot on"></div><div class="pdot"></div><div class="pdot"></div></div><div class="pskip" onclick="OB(3)">跳过</div></div>
+<div class="obody">
+<div class="slbl">STEP 2 · 了解你</div><div class="stit">基本身体数据</div><div class="ssub">用于计算你的每日营养目标</div>
+<div class="fg">
+<div><div class="fl">性别</div><div class="gr2"><div class="gb2 sel bp" onclick="OG(this)">男</div><div class="gb2 bp" onclick="OG(this)">女</div></div></div>
+<div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div class="fl">年龄</div><span style="font-size:14px;font-weight:500;color:var(--t1);" id="ov-age">28 岁</span></div><input type="range" min="15" max="80" value="28" oninput="document.getElementById('ov-age').textContent=this.value+' 岁'"></div>
+<div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div class="fl">身高</div><span style="font-size:14px;font-weight:500;color:var(--t1);" id="ov-ht">170 cm</span></div><input type="range" min="140" max="200" value="170" oninput="document.getElementById('ov-ht').textContent=this.value+' cm'"></div>
+<div><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div class="fl">体重</div><span style="font-size:14px;font-weight:500;color:var(--t1);" id="ov-wt">65 kg</span></div><input type="range" min="35" max="120" value="65" oninput="document.getElementById('ov-wt').textContent=this.value+' kg'"></div>
+</div>
+<button class="cta bp" onclick="OB(3)">下一步 →</button>
+</div>
+</div>
+<div class="sc" id="ob3">
+<div class="pwrap"><div class="pback" onclick="OB(2)">‹</div><div class="pdots"><div class="pdot done"></div><div class="pdot done"></div><div class="pdot on"></div><div class="pdot"></div></div><div class="pskip" onclick="OB(4)">跳过</div></div>
+<div class="obody">
+<div class="slbl">STEP 3 · 保护你</div><div class="stit">有没有不能吃的？</div><div class="ssub">选中后菜单里会做标识提示，随时可修改</div>
+<div class="tgg">
+<div class="tg bp" onclick="this.classList.toggle('sel')">海鲜</div><div class="tg bp" onclick="this.classList.toggle('sel')">花生</div><div class="tg bp" onclick="this.classList.toggle('sel')">牛羊肉</div><div class="tg bp" onclick="this.classList.toggle('sel')">乳制品</div><div class="tg bp" onclick="this.classList.toggle('sel')">鸡蛋</div><div class="tg bp" onclick="this.classList.toggle('sel')">豆制品</div><div class="tg bp" onclick="this.classList.toggle('sel')">麸质</div><div class="tg bp" onclick="this.classList.toggle('sel')">辛辣</div><div class="tg bp" onclick="this.classList.toggle('sel')">高嘌呤</div><div class="tg bp" onclick="this.classList.toggle('sel')">高盐</div><div class="tg bp" onclick="this.classList.toggle('sel')">高糖</div><div class="tg bp" onclick="this.classList.toggle('sel')">酒精</div>
+</div>
+<div class="nt bp" id="ob-nt" onclick="ONT()">以上都没有，我什么都能吃 ✓</div>
+<button class="cta bp" style="margin-top:16px;" onclick="OB(4)">下一步 →</button>
+</div>
+</div>
+<div class="sc" id="ob4">
+<div class="pwrap"><div class="pback" onclick="OB(3)">‹</div><div class="pdots"><div class="pdot done"></div><div class="pdot done"></div><div class="pdot done"></div><div class="pdot on"></div></div><div style="width:40px;"></div></div>
+<div class="dw2">
+<div class="dc">✓</div>
+<div style="font-size:19px;font-weight:500;color:var(--t1);text-align:center;margin-bottom:4px;">初始方案已生成！</div>
+<div style="font-size:13px;color:var(--t2);text-align:center;margin-bottom:18px;line-height:1.6;">先用着，随时可以完善</div>
+<div class="pc">
+<div style="font-size:12px;font-weight:500;color:var(--brand-dark);margin-bottom:8px;">你的基础方案</div>
+<div class="pr"><span style="font-size:12px;color:var(--brand);">每日热量目标</span><span style="font-size:13px;font-weight:500;color:var(--brand-dark);">1800 kcal</span></div>
+<div class="pr"><span style="font-size:12px;color:var(--brand);">蛋白质</span><span style="font-size:13px;font-weight:500;color:var(--brand-dark);">75 g</span></div>
+<div class="pr"><span style="font-size:12px;color:var(--brand);">方案类型</span><span style="font-size:13px;font-weight:500;color:var(--brand-dark);">均衡健康型</span></div>
+</div>
+<div class="an bp">
+<div class="ai2">📋</div>
+<div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">上传健康档案，推荐更精准</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">体检报告·病历，营养师据此优化方案</div></div>
+<span style="font-size:16px;color:var(--t2);">›</span>
+</div>
+<div style="font-size:11px;color:var(--t2);text-align:center;margin-bottom:4px;">也可稍后在「我的→健康档案」上传</div>
+<button class="cta bp" style="margin-top:10px;" onclick="SM('home',document.querySelectorAll('.mb')[1])">从今天开始，好好吃饭 →</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 首页 ══ -->
+<div class="mw" id="mod-home">
+<div class="ml">完整首页 · 优化信息密度</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on" id="h-home">
+<div class="scroll">
+<div class="greet">
+<div><div style="font-size:18px;font-weight:500;color:var(--t1);">早上好，张越 👋</div><div style="font-size:12px;color:var(--t2);margin-top:2px;">4月30日 · 今天要好好吃饭哦</div></div>
+<div style="display:flex;gap:8px;"><div class="nb bp" onclick="SM('notif',document.querySelectorAll('.mb')[6])">🔔<div class="nd"></div></div><div class="av bp" onclick="hS('profile')">张</div></div>
+</div>
+<div class="tc as d1">
+<div class="tcb">🥗</div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+<div><div style="font-size:11px;font-weight:500;opacity:.8;letter-spacing:.3px;">TODAY · 今日热量</div>
+<div style="margin-top:8px;"><div style="font-size:26px;font-weight:500;color:white;line-height:1;">920 <span style="font-size:14px;opacity:.8;">kcal</span></div><div style="font-size:11px;opacity:.8;margin-top:3px;">已摄入 · 目标 1800，还差 880</div></div></div>
+<div class="trw"><svg viewBox="0 0 56 56"><circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="5"/><circle cx="28" cy="28" r="22" fill="none" stroke="white" stroke-width="5" stroke-dasharray="69 138" stroke-dashoffset="-35" stroke-linecap="round"/></svg><div class="trt">50%</div></div>
+</div>
+<div style="display:flex;gap:6px;margin-bottom:0;">
+<div style="flex:1;background:rgba(255,255,255,.12);border-radius:8px;padding:5px 6px;text-align:center;"><div style="font-size:12px;font-weight:500;color:white;">38g</div><div style="font-size:10px;opacity:.75;">蛋白质</div></div>
+<div style="flex:1;background:rgba(255,255,255,.12);border-radius:8px;padding:5px 6px;text-align:center;"><div style="font-size:12px;font-weight:500;color:white;">110g</div><div style="font-size:10px;opacity:.75;">碳水</div></div>
+<div style="flex:1;background:rgba(255,255,255,.12);border-radius:8px;padding:5px 6px;text-align:center;"><div style="font-size:12px;font-weight:500;color:white;">24g</div><div style="font-size:10px;opacity:.75;">脂肪</div></div>
+<div style="flex:1;background:rgba(255,255,255,.12);border-radius:8px;padding:5px 6px;text-align:center;"><div style="font-size:12px;font-weight:500;color:white;">12g</div><div style="font-size:10px;opacity:.75;">纤维</div></div>
+</div>
+<div class="tcta bp" onclick="hS('discover')">
+<div style="display:flex;align-items:center;gap:8px;"><div class="tci">🍽️</div><div><div style="font-size:13px;font-weight:500;color:white;">查看今日推荐餐单</div><div style="font-size:11px;opacity:.75;margin-top:1px;">午餐还没记录 · 3道推荐等你</div></div></div>
+<div style="font-size:16px;opacity:.8;color:white;">›</div>
+</div>
+</div>
+<div class="ait as d2" id="h-tip">
+<div style="font-size:14px;flex-shrink:0;">💡</div>
+<div style="flex:1;font-size:12px;color:var(--t1);line-height:1.4;">今日<span style="color:var(--brand);font-weight:500;">蛋白质缺口较大</span>，午餐建议选高蛋白菜品</div>
+<div style="font-size:14px;color:var(--t2);cursor:pointer;" onclick="document.getElementById('h-tip').style.display='none'">×</div>
+</div>
+<div class="qr as d3">
+<div class="qb bp" onclick="SM('rest',document.querySelectorAll('.mb')[2])"><div class="qi" style="background:#FEF3E2;">🏪</div><div style="font-size:11px;font-weight:500;color:var(--t1);">点外卖</div><div style="font-size:10px;color:var(--t2);">24家餐厅</div></div>
+<div class="qb bp" onclick="hS('record')"><div class="qi" style="background:#E6F1FB;">📋</div><div style="font-size:11px;font-weight:500;color:var(--t1);">记录饮食</div><div style="font-size:10px;color:var(--t2);">已记2餐</div></div>
+<div class="qb bp"><div class="qi" style="background:#EAF3DE;">👨‍👩‍👧</div><div style="font-size:11px;font-weight:500;color:var(--t1);">家庭餐单</div><div style="font-size:10px;color:var(--t2);">4位成员</div></div>
+</div>
+<div style="padding:0 16px;" class="as d4"><div class="sh"><h3>午餐推荐</h3><a>换一换</a></div></div>
+<div style="margin:0 16px 8px;padding:9px 12px;background:var(--brand-light);border-radius:10px;border:0.5px solid var(--brand-pale);font-size:11px;color:var(--brand-dark);line-height:1.5;">根据你的健康档案已筛选，<strong>标识仅供参考，选择权在你</strong></div>
+<div class="mh bp as d4">
+<div class="mht">🥗</div>
+<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">藜麦鸡胸沙拉</div><div style="font-size:11px;color:var(--brand);margin-top:2px;">轻食研究所 · 420 kcal · 高蛋白</div><div style="margin-top:5px;"><span class="lg gg">✓ 挺适合你</span></div></div>
+<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">¥38</div><button class="ab bp" onclick="hAC(this,38)">+</button></div>
+</div>
+<div style="padding:0 16px;display:flex;flex-direction:column;gap:6px;margin-bottom:4px;" class="as d5">
+<div class="mm bp"><div style="width:36px;height:36px;border-radius:8px;background:#FEF3E2;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">🍱</div><div style="flex:1;font-size:12px;font-weight:500;color:var(--t1);">低盐鸡胸便当</div><div style="font-size:11px;color:var(--t2);">¥35</div><div class="mma bp" onclick="hAC(this,35)">+</div></div>
+<div class="mm bp"><div style="width:36px;height:36px;border-radius:8px;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">🍜</div><div style="flex:1;font-size:12px;font-weight:500;color:var(--t1);">番茄牛腩面 <span style="font-size:10px;color:var(--warn-text);">今天钠快够了</span></div><div style="font-size:11px;color:var(--t2);">¥28</div><div class="mma bp" onclick="hAC(this,28)">+</div></div>
+</div>
+<div style="padding:0 16px;margin-top:8px;"><div class="sh"><h3>附近餐厅</h3><a onclick="SM('rest',document.querySelectorAll('.mb')[2])">全部</a></div></div>
+<div class="rs">
+<div class="rc2 bp" onclick="SM('rest',document.querySelectorAll('.mb')[2])"><div class="ri" style="background:#E8F7F0;">🥗<div class="rscore shi">92分</div></div><div style="padding:5px 8px 7px;"><div style="font-size:11px;font-weight:500;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">轻食研究所</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">28分钟·免费</div></div></div>
+<div class="rc2 bp"><div class="ri" style="background:#EAF3DE;">🐟<div class="rscore shi">90分</div></div><div style="padding:5px 8px 7px;"><div style="font-size:11px;font-weight:500;color:var(--t1);">清蒸小厨</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">35分钟·免费</div></div></div>
+<div class="rc2 bp"><div class="ri" style="background:#FEF3E2;">🍱<div class="rscore shi">87分</div></div><div style="padding:5px 8px 7px;"><div style="font-size:11px;font-weight:500;color:var(--t1);">粒粒香便当</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">32分钟·免费</div></div></div>
+<div class="rc2 bp"><div class="ri" style="background:#FEF0F0;">🌶️<div class="rscore smi">45分</div></div><div style="padding:5px 8px 7px;"><div style="font-size:11px;font-weight:500;color:var(--t1);">川味火锅</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">40分钟·免费</div></div></div>
+</div>
+<div class="skbar bp" style="margin-bottom:12px;">
+<div class="sbd"><div class="sdd done"></div><div class="sdd done"></div><div class="sdd done"></div><div class="sdd done"></div><div class="sdd done"></div><div class="sdd done"></div><div class="sdd today"></div></div>
+<div style="flex:1;"><div style="font-size:12px;font-weight:500;color:var(--t1);">已连续打卡 12 天 🎉</div><div style="font-size:10px;color:var(--t2);margin-top:1px;">今日还未完成 · 点击查看</div></div>
+<div style="font-size:14px;color:var(--t2);">›</div>
+</div>
+<div style="padding:0 16px;"><div class="sh" style="margin-top:0;"><h3>家庭动态</h3><a>全部</a></div></div>
+<div class="fmr" style="margin-bottom:16px;">
+<div class="fm bp"><div style="width:32px;height:32px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#0C447C;">爸</div><div style="font-size:11px;color:var(--t2);">爸爸</div><div class="fmb"><div class="fmf" style="width:72%;background:#378ADD;"></div></div></div>
+<div class="fm bp"><div style="width:32px;height:32px;border-radius:50%;background:#FEF3E2;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#92500E;">妈</div><div style="font-size:11px;color:var(--t2);">妈妈</div><div class="fmb"><div class="fmf" style="width:85%;background:var(--brand);"></div></div></div>
+<div class="fm bp"><div style="width:32px;height:32px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--brand-dark);">我</div><div style="font-size:11px;color:var(--t2);">张越</div><div class="fmb"><div class="fmf" style="width:50%;background:var(--brand);"></div></div></div>
+<div class="fm bp"><div style="width:32px;height:32px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:#3C3489;">奶</div><div style="font-size:11px;color:var(--t2);">奶奶</div><div class="fmb"><div class="fmf" style="width:78%;background:#7F77DD;"></div></div></div>
+</div>
+</div>
+<div id="h-cb" style="display:none;" class="cb"><div class="cw bp"><span>🛒</span><div class="cbg" id="h-cn">0</div></div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);" id="h-ct">¥0</div><div style="font-size:11px;color:var(--t2);" id="h-cs">已选0件</div></div><button class="cob bp">去下单 →</button></div>
+<nav class="bnav"><div class="ni on"><div class="ico">🏠</div><div class="lbl">首页</div></div><div class="ni" onclick="hS('discover')"><div class="ico">🏪</div><div class="lbl">点外卖</div></div><div class="ni" onclick="hS('record')"><div class="ico">📋</div><div class="lbl">记录</div></div><div class="ni" onclick="hS('profile')"><div class="ico">👤</div><div class="lbl">我的</div></div></nav>
+</div>
+<div class="sc" id="h-discover">
+<div style="padding:10px 16px 8px;border-bottom:0.5px solid var(--bd);"><div class="sinp bp" onclick="SM('search',document.querySelectorAll('.mb')[3])" style="cursor:pointer;margin-bottom:8px;"><span style="font-size:14px;">🔍</span><span style="font-size:13px;color:var(--t2);">搜索菜品、餐厅…</span></div><div class="fs" style="padding:0;border:none;"><div class="fc sp on">✦ 适合我</div><div class="fc">全部</div><div class="fc">低卡</div><div class="fc">高蛋白</div></div></div>
+<div class="scroll" style="padding-top:10px;">
+<div style="margin:0 16px 8px;padding:9px 12px;background:var(--brand-light);border-radius:10px;border:0.5px solid var(--brand-pale);font-size:11px;color:var(--brand-dark);">健康评分基于你的档案，<strong>标识仅供参考，选择权在你</strong></div>
+<div class="rcard bp"><div class="rci" style="background:#E8F7F0;">🥗<div class="hb hhi">健康 92分<span class="sq" onclick="event.stopPropagation();GS('r92')">?</span></div></div><div style="padding:9px 12px;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">轻食研究所</div><div style="font-size:11px;color:var(--t2);margin-bottom:5px;">⭐4.8 · 28分钟 · 免配送费</div><div style="display:flex;gap:5px;"><span class="lg gg">高蛋白</span><span class="lg gg">低嘌呤</span></div></div></div>
+<div class="rcard bp"><div class="rci" style="background:#EAF3DE;">🐟<div class="hb hhi">健康 90分<span class="sq" onclick="event.stopPropagation();GS('r90')">?</span></div></div><div style="padding:9px 12px;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">清蒸小厨</div><div style="font-size:11px;color:var(--t2);margin-bottom:5px;">⭐4.7 · 35分钟 · 免配送费</div><div style="display:flex;gap:5px;"><span class="lg gg">低钠</span><span class="lg gg">适合慢病</span></div></div></div>
+<div class="rcard bp"><div class="rci" style="background:#FEF0F0;">🌶️<div class="hb hmi">健康 45分<span class="sq" onclick="event.stopPropagation();GS('r45')">?</span></div></div><div style="padding:9px 12px;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">川味传承火锅</div><div style="font-size:11px;color:var(--t2);margin-bottom:5px;">⭐4.9 · 40分钟 · 免配送费</div><div style="display:flex;gap:5px;"><span class="lg gw">今天钠快够了</span><span style="font-size:10px;padding:2px 6px;background:var(--bg2);color:var(--t2);border-radius:3px;font-weight:500;">偶尔解馋</span></div></div></div>
+<div style="height:12px;"></div>
+</div>
+<nav class="bnav"><div class="ni" onclick="hS('home')"><div class="ico">🏠</div><div class="lbl">首页</div></div><div class="ni on"><div class="ico">🏪</div><div class="lbl">点外卖</div></div><div class="ni" onclick="hS('record')"><div class="ico">📋</div><div class="lbl">记录</div></div><div class="ni" onclick="hS('profile')"><div class="ico">👤</div><div class="lbl">我的</div></div></nav>
+</div>
+<div class="sc" id="h-record">
+<div class="ph"><span class="pt">饮食记录</span><span style="font-size:12px;color:var(--brand);margin-left:auto;cursor:pointer;">+ 手动添加</span></div>
+<div class="scroll" style="padding:12px 16px 16px;">
+<div class="card" style="margin-bottom:12px;"><div style="font-size:12px;font-weight:500;color:var(--t2);margin-bottom:8px;">本周热量（kcal）</div><div style="display:flex;gap:4px;align-items:flex-end;height:50px;"><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:14px;border-radius:3px 3px 0 0;height:75%;background:var(--brand);"></div><div style="font-size:9px;color:var(--t2);">一</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:14px;border-radius:3px 3px 0 0;height:82%;background:var(--brand);"></div><div style="font-size:9px;color:var(--t2);">二</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:14px;border-radius:3px 3px 0 0;height:68%;background:var(--brand);"></div><div style="font-size:9px;color:var(--t2);">三</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:14px;border-radius:3px 3px 0 0;height:90%;background:#EF9F27;"></div><div style="font-size:9px;color:var(--t2);">四</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:14px;border-radius:3px 3px 0 0;height:72%;background:var(--brand);"></div><div style="font-size:9px;color:var(--t2);">五</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:14px;border-radius:3px 3px 0 0;height:65%;background:var(--brand);"></div><div style="font-size:9px;color:var(--t2);">六</div></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="width:14px;border-radius:3px 3px 0 0;height:51%;background:var(--brand-mid);"></div><div style="font-size:9px;color:var(--brand);font-weight:500;">今</div></div></div></div>
+<div style="font-size:13px;font-weight:500;margin-bottom:10px;color:var(--t1);">今日时间线</div>
+<div style="display:flex;gap:12px;padding:8px 0;border-bottom:0.5px solid var(--bd);"><div style="font-size:11px;color:var(--t2);width:40px;text-align:right;padding-top:2px;flex-shrink:0;">7:30</div><div style="display:flex;flex-direction:column;align-items:center;"><div style="width:8px;height:8px;border-radius:50%;background:var(--brand);margin-top:4px;flex-shrink:0;"></div><div style="flex:1;width:1.5px;background:var(--bd);min-height:20px;"></div></div><div style="flex:1;padding-bottom:6px;"><div style="font-size:11px;color:var(--t2);">早餐</div><div style="font-size:13px;font-weight:500;color:var(--t1);">燕麦牛奶粥 + 水煮蛋</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">420 kcal</div></div></div>
+<div style="display:flex;gap:12px;padding:8px 0;"><div style="font-size:11px;color:var(--t2);width:40px;text-align:right;padding-top:2px;flex-shrink:0;">待添加</div><div style="display:flex;flex-direction:column;align-items:center;"><div style="width:8px;height:8px;border-radius:50%;border:1.5px dashed var(--bd2);margin-top:4px;flex-shrink:0;"></div></div><div style="flex:1;padding-bottom:6px;"><div style="font-size:11px;color:var(--t2);">午餐</div><div style="font-size:13px;color:var(--t2);">点外卖或手动记录 →</div></div></div>
+</div>
+<nav class="bnav"><div class="ni" onclick="hS('home')"><div class="ico">🏠</div><div class="lbl">首页</div></div><div class="ni" onclick="hS('discover')"><div class="ico">🏪</div><div class="lbl">点外卖</div></div><div class="ni on"><div class="ico">📋</div><div class="lbl">记录</div></div><div class="ni" onclick="hS('profile')"><div class="ico">👤</div><div class="lbl">我的</div></div></nav>
+</div>
+<div class="sc" id="h-profile">
+<div style="padding:20px 16px 14px;display:flex;align-items:center;gap:14px;border-bottom:0.5px solid var(--bd);"><div style="width:56px;height:56px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:500;color:var(--brand-dark);flex-shrink:0;">张</div><div><div style="font-size:17px;font-weight:500;color:var(--t1);">张越</div><div style="font-size:12px;color:var(--t2);margin-top:3px;">男 · 28岁 · 北京朝阳区</div><div style="display:inline-block;margin-top:4px;font-size:10px;padding:3px 8px;background:var(--brand-light);color:var(--brand-dark);border-radius:20px;border:0.5px solid var(--brand-pale);">✦ 已坚持12天</div></div></div>
+<div class="scroll" style="padding:12px 0 16px;">
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 16px 12px;"><div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;border:0.5px solid var(--bd);"><div style="font-size:18px;font-weight:500;color:var(--t1);">12</div><div style="font-size:10px;color:var(--t2);margin-top:2px;">连续打卡</div></div><div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;border:0.5px solid var(--bd);"><div style="font-size:18px;font-weight:500;color:var(--t1);">86%</div><div style="font-size:10px;color:var(--t2);margin-top:2px;">本周达标率</div></div><div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;border:0.5px solid var(--bd);"><div style="font-size:18px;font-weight:500;color:var(--t1);">38单</div><div style="font-size:10px;color:var(--t2);margin-top:2px;">累计订单</div></div></div>
+<div style="margin:0 16px;"><div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:0.5px solid var(--bd);cursor:pointer;"><div style="width:32px;height:32px;border-radius:8px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:15px;">📋</div><div style="flex:1;font-size:13px;color:var(--t1);">我的健康档案</div><div style="font-size:12px;color:var(--t2);">营养师已审核 ›</div></div><div style="display:flex;align-items:center;gap:12px;padding:12px 0;cursor:pointer;" onclick="SM('orders',document.querySelectorAll('.mb')[7])"><div style="width:32px;height:32px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:15px;">📦</div><div style="flex:1;font-size:13px;color:var(--t1);">订单记录</div><div style="font-size:12px;color:var(--t2);">38单 ›</div></div></div>
+</div>
+<nav class="bnav"><div class="ni" onclick="hS('home')"><div class="ico">🏠</div><div class="lbl">首页</div></div><div class="ni" onclick="hS('discover')"><div class="ico">🏪</div><div class="lbl">点外卖</div></div><div class="ni" onclick="hS('record')"><div class="ico">📋</div><div class="lbl">记录</div></div><div class="ni on"><div class="ico">👤</div><div class="lbl">我的</div></div></nav>
+</div>
+</div>
+</div>
+
+<!-- ══ 点外卖 ══ -->
+<div class="mw" id="mod-rest">
+<div class="ml">点外卖 · 餐厅+菜单+评分说明</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on" id="r-list">
+<div style="padding:10px 16px 8px;border-bottom:0.5px solid var(--bd);"><div class="sinp bp" style="cursor:pointer;margin-bottom:8px;" onclick="SM('search',document.querySelectorAll('.mb')[3])"><span style="font-size:14px;">🔍</span><span style="font-size:13px;color:var(--t2);">搜索菜品、餐厅…</span></div><div class="fs" style="padding:0;border:none;"><div class="fc sp on">✦ 适合我</div><div class="fc">全部</div><div class="fc">低钠</div><div class="fc">低GI</div><div class="fc">高蛋白</div></div></div>
+<div class="scroll" style="padding-top:10px;">
+<div style="margin:0 16px 8px;padding:9px 12px;background:var(--brand-light);border-radius:10px;border:0.5px solid var(--brand-pale);font-size:11px;color:var(--brand-dark);line-height:1.5;">💚 评分基于你的档案计算，点 <strong>?</strong> 查看说明，<strong>选择权在你</strong></div>
+<div class="rcard bp" onclick="rS('menu')"><div class="rci" style="background:#E8F7F0;">🥗<div class="hb hhi">健康 92分<span class="sq" onclick="event.stopPropagation();GS('r92')">?</span></div></div><div style="padding:9px 12px;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">轻食研究所</div><div style="font-size:11px;color:var(--t2);margin-bottom:5px;">⭐4.8 · 28分钟 · 免配送费</div><div style="display:flex;gap:5px;"><span class="lg gg">高蛋白</span><span class="lg gg">低嘌呤</span></div></div></div>
+<div class="rcard bp" onclick="rS('menu')"><div class="rci" style="background:#EAF3DE;">🐟<div class="hb hhi">健康 90分<span class="sq" onclick="event.stopPropagation();GS('r90')">?</span></div></div><div style="padding:9px 12px;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">清蒸小厨</div><div style="font-size:11px;color:var(--t2);margin-bottom:5px;">⭐4.7 · 35分钟 · 免配送费</div><div style="display:flex;gap:5px;"><span class="lg gg">低钠</span><span class="lg gg">适合慢病</span></div></div></div>
+<div class="rcard bp" onclick="rS('menu')"><div class="rci" style="background:#FEF0F0;">🌶️<div class="hb hmi">健康 45分<span class="sq" onclick="event.stopPropagation();GS('r45')">?</span></div></div><div style="padding:9px 12px;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">川味传承火锅</div><div style="font-size:11px;color:var(--t2);margin-bottom:5px;">⭐4.9 · 40分钟 · 免配送费</div><div style="display:flex;gap:5px;"><span class="lg gw">今天钠快够了</span><span style="font-size:10px;padding:2px 6px;background:var(--bg2);color:var(--t2);border-radius:3px;font-weight:500;">偶尔解馋</span></div></div></div>
+</div>
+</div>
+<div class="sc" id="r-menu">
+<div style="padding:12px 16px 10px;border-bottom:0.5px solid var(--bd);">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span style="font-size:19px;cursor:pointer;color:var(--t2);" onclick="rS('list')">‹</span><span style="font-size:16px;font-weight:500;color:var(--t1);flex:1;">轻食研究所</span><span style="padding:4px 10px;border-radius:20px;background:var(--brand);color:white;font-size:11px;font-weight:500;display:flex;align-items:center;gap:3px;">健康92分<span class="sq" onclick="GS('r92')">?</span></span></div>
+<div style="font-size:11px;color:var(--t2);margin-bottom:6px;">⭐4.8 · 28分钟 · 免配送</div>
+<div style="padding:8px 10px;background:var(--warn-bg);border-radius:10px;border:0.5px solid var(--warn-border);font-size:11px;color:var(--warn-text);line-height:1.5;">本店约<strong>85%菜品适合你</strong>，绿色优先选，标识仅供参考</div>
+</div>
+<div class="scroll">
+<div style="padding:8px 16px 0;">
+<div style="font-size:11px;font-weight:500;color:var(--t2);padding:8px 0 6px;border-bottom:0.5px solid var(--bd);margin-bottom:2px;">今日主推</div>
+<div class="drow"><div class="dth" style="background:var(--brand-light);">🥗<div class="hd hdg">✓</div></div>
+<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">藜麦鸡胸沙拉</div><div style="font-size:11px;color:var(--t2);margin-bottom:4px;">有机藜麦、烤鸡胸、牛油果</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;"><span class="sp2 spg">92分<span class="sq sqg" onclick="event.stopPropagation();GS('d92')">?</span></span><span class="lg gg" style="font-size:9px;padding:2px 6px;">✓ 挺适合你</span><span class="lg gg" style="font-size:9px;padding:2px 6px;">蛋白质满满</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:14px;font-weight:500;color:var(--t1);">¥38</span><span style="font-size:10px;color:var(--t2);"> · 420 kcal</span></div><button class="ab bp" onclick="rAC(this,38)">+</button></div></div></div>
+<div class="drow"><div class="dth" style="background:#FEF3E2;">🍱<div class="hd hda">!</div></div>
+<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">照烧鸡腿饭</div><div style="font-size:11px;color:var(--t2);margin-bottom:4px;">嫩煎鸡腿、杂粮饭、时令蔬菜</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;"><span class="sp2 spa">68分<span class="sq sqa" onclick="event.stopPropagation();GS('d68')">?</span></span><span class="lg gw" style="font-size:9px;padding:2px 6px;">照烧酱含糖</span><span class="lg gg" style="font-size:9px;padding:2px 6px;">高蛋白</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:14px;font-weight:500;color:var(--t1);">¥42</span><span style="font-size:10px;color:var(--t2);"> · 560 kcal</span></div><button class="ab bp" onclick="rAC(this,42)">+</button></div></div></div>
+<div class="drow"><div class="dth" style="background:var(--caution-bg);">🦐<div class="hd hdr">✕</div></div>
+<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:3px;">鲜虾牛油果沙拉</div><div style="font-size:11px;color:var(--t2);margin-bottom:4px;">鲜虾、牛油果、千岛酱</div>
+<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;"><span class="sp2 spr">41分<span class="sq sqr" onclick="event.stopPropagation();GS('d41')">?</span></span><span class="lg gr" style="font-size:9px;padding:2px 6px;">尿酸高时少吃</span><span class="lg gg" style="font-size:9px;padding:2px 6px;">好脂肪</span></div>
+<div style="display:flex;align-items:center;justify-content:space-between;"><div><span style="font-size:14px;font-weight:500;color:var(--t1);">¥48</span><span style="font-size:10px;color:var(--t2);"> · 380 kcal</span></div><button class="ab bp" onclick="rAC(this,48)">+</button></div></div></div>
+</div>
+</div>
+<div id="r-cb" style="display:none;" class="cb"><div class="cw bp"><span>🛒</span><div class="cbg" id="r-cn">0</div></div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);" id="r-ct">¥0</div><div style="font-size:11px;color:var(--t2);" id="r-cs">已选0件</div></div><button class="cob bp" onclick="SM('delivery',document.querySelectorAll('.mb')[10])">去结算 →</button></div>
+</div>
+</div>
+</div>
+
+<!-- ══ 搜索 ══ -->
+<div class="mw" id="mod-search">
+<div class="ml">搜索 · 智能建议+健康筛选</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on">
+<div style="padding:10px 16px;border-bottom:0.5px solid var(--bd);"><div class="sinp"><span style="font-size:15px;color:var(--t2);">🔍</span><input type="text" placeholder="搜索菜品、餐厅…" id="si" oninput="SR(this.value)"><span style="font-size:14px;color:var(--t2);cursor:pointer;" onclick="SC()">×</span></div></div>
+<div class="fs"><div class="fc on">全部</div><div class="fc">低钠</div><div class="fc">高蛋白</div><div class="fc">低GI</div><div class="fc">低嘌呤</div></div>
+<div class="scroll" id="sd">
+<div style="padding:12px 16px 0;">
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:8px;letter-spacing:.3px;">大家都在搜</div>
+<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;"><div class="stag bp" onclick="SS('鸡胸肉')">🍗 鸡胸肉</div><div class="stag bp" onclick="SS('低卡便当')">🍱 低卡便当</div><div class="stag bp" onclick="SS('沙拉')">🥗 沙拉</div><div class="stag bp" onclick="SS('清蒸鱼')">🐟 清蒸鱼</div><div class="stag bp" onclick="SS('燕麦粥')">🥣 燕麦粥</div></div>
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:8px;letter-spacing:.3px;">适合你的菜</div>
+<div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;"><div class="stag bp" style="border-color:var(--brand-pale);color:var(--brand-dark);" onclick="SS('低嘌呤')">🟢 低嘌呤</div><div class="stag bp" style="border-color:var(--brand-pale);color:var(--brand-dark);" onclick="SS('低钠')">💧 低钠</div><div class="stag bp" style="border-color:var(--brand-pale);color:var(--brand-dark);" onclick="SS('高蛋白')">💪 高蛋白</div></div>
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:8px;letter-spacing:.3px;">最近搜索</div>
+<div style="display:flex;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--bd);cursor:pointer;" onclick="SS('藜麦沙拉')"><span style="font-size:13px;color:var(--t2);margin-right:8px;">🕐</span><span style="font-size:13px;color:var(--t1);flex:1;">藜麦沙拉</span><span style="font-size:13px;color:var(--t2);">×</span></div>
+<div style="display:flex;align-items:center;padding:8px 0;cursor:pointer;" onclick="SS('轻食研究所')"><span style="font-size:13px;color:var(--t2);margin-right:8px;">🕐</span><span style="font-size:13px;color:var(--t1);flex:1;">轻食研究所</span><span style="font-size:13px;color:var(--t2);">×</span></div>
+</div>
+</div>
+<div class="scroll" id="sr" style="display:none;">
+<div style="padding:10px 16px 0;">
+<div style="font-size:12px;color:var(--t2);margin-bottom:12px;">「<span id="sk" style="color:var(--brand);font-weight:500;"></span>」的搜索结果</div>
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:8px;letter-spacing:.3px;">菜品</div>
+<div class="drow"><div class="dth" style="background:var(--brand-light);width:48px;height:48px;">🥗</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">藜麦鸡胸沙拉</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">轻食研究所 · 420 kcal</div><div style="display:flex;gap:4px;margin-top:4px;"><span class="sp2 spg" style="font-size:11px;">92分<span class="sq sqg" onclick="event.stopPropagation();GS('d92')">?</span></span><span class="lg gg">✓ 挺适合你</span></div></div><div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><span style="font-size:12px;font-weight:500;color:var(--t1);">¥38</span><button class="ab bp" style="width:24px;height:24px;font-size:16px;" onclick="rAC(this,38)">+</button></div></div>
+<div class="drow"><div class="dth" style="background:#EAF3DE;width:48px;height:48px;">🐟</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">清蒸三文鱼套餐</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">清蒸小厨 · 430 kcal</div><div style="display:flex;gap:4px;margin-top:4px;"><span class="sp2 spg" style="font-size:11px;">88分<span class="sq sqg" onclick="event.stopPropagation();GS('d92')">?</span></span><span class="lg gg">低嘌呤</span></div></div><div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><span style="font-size:12px;font-weight:500;color:var(--t1);">¥58</span><button class="ab bp" style="width:24px;height:24px;font-size:16px;" onclick="rAC(this,58)">+</button></div></div>
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin:12px 0 8px;letter-spacing:.3px;">餐厅</div>
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;cursor:pointer;"><div style="width:40px;height:40px;border-radius:9px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🥗</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">轻食研究所</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">28分钟·免配送·月售1.2k</div></div><span style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;background:var(--brand);color:white;flex-shrink:0;">92分</span></div>
+<div style="height:16px;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 空状态 ══ -->
+<div class="mw" id="mod-empty">
+<div class="ml">空状态 · 4种场景</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div style="display:flex;gap:5px;padding:8px 16px;background:var(--bg2);border-bottom:0.5px solid var(--bd);overflow-x:auto;flex-shrink:0;">
+<div class="fc on" onclick="emS('day1',this)">注册首天</div><div class="fc" onclick="emS('loading',this)">分析中</div><div class="fc" onclick="emS('norecord',this)">无记录</div><div class="fc" onclick="emS('nofav',this)">无收藏</div>
+</div>
+<div class="sc on" id="em-day1" style="min-height:520px;">
+<div class="scroll">
+<div class="greet"><div><div style="font-size:18px;font-weight:500;color:var(--t1);">欢迎加入，张越 🎉</div><div style="font-size:12px;color:var(--t2);margin-top:2px;">今天是你在好好吃饭的第1天</div></div><div class="av bp">张</div></div>
+<div style="margin:0 16px 12px;background:var(--brand);border-radius:18px;padding:18px;color:white;position:relative;overflow:hidden;"><div style="position:absolute;right:-8px;top:-8px;font-size:78px;opacity:.1;line-height:1;">🥗</div><div style="font-size:11px;opacity:.8;letter-spacing:.3px;margin-bottom:8px;">WELCOME · 好好吃饭</div><div style="font-size:18px;font-weight:500;line-height:1.3;margin-bottom:6px;">方案已生成<br>准备好开始了吗？</div><div style="font-size:12px;opacity:.8;line-height:1.5;margin-bottom:14px;">越用越精准，现在就点第一餐吧</div><div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);padding:8px 14px;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;">点今日第一餐 →</div></div>
+<div style="padding:0 16px;">
+<div class="sh" style="margin-top:0;"><h3>完成这几步，推荐更精准</h3></div>
+<div class="sti"><div class="stn nd2">✓</div><div style="flex:1;padding-top:5px;"><div style="font-size:13px;font-weight:500;color:var(--t1);">选择人群 & 填写身体数据</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">基础方案已生成</div><div style="font-size:10px;padding:2px 7px;border-radius:10px;background:var(--brand-light);color:var(--brand-dark);display:inline-block;margin-top:4px;">已完成</div></div></div>
+<div class="sti"><div class="stn na">2</div><div style="flex:1;padding-top:5px;"><div style="font-size:13px;font-weight:500;color:var(--t1);">上传健康档案</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">推荐准确度提升60%</div><div style="font-size:10px;padding:2px 7px;border-radius:10px;background:var(--warn-bg);color:var(--warn-text);display:inline-block;margin-top:4px;">建议完成</div></div></div>
+<div class="sti"><div class="stn ni2">3</div><div style="flex:1;padding-top:5px;"><div style="font-size:13px;font-weight:500;color:var(--t1);">完成第一次点餐</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">AI开始学习你的口味偏好</div></div></div>
+</div>
+<div style="padding:0 16px 20px;display:flex;flex-direction:column;gap:8px;margin-top:8px;"><button class="cta bp" style="margin-top:0;">上传健康档案 →</button><button class="ctag bp">跳过，先去点餐</button></div>
+</div>
+</div>
+<div class="sc" id="em-loading" style="min-height:520px;">
+<div class="scroll" style="padding:12px 16px 16px;">
+<div style="margin-bottom:12px;padding:16px;background:#E6F1FB;border-radius:18px;border:0.5px solid #B5D4F4;">
+<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;"><div style="width:36px;height:36px;border-radius:50%;background:#378ADD;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🧠</div><div><div style="font-size:13px;font-weight:500;color:#0C447C;">AI 正在解读你的健康档案</div><div style="font-size:11px;color:#185FA5;margin-top:2px;">通常需要 1-2 分钟</div></div></div>
+<div style="display:flex;flex-direction:column;gap:6px;">
+<div style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:8px;"><span>✓</span> 体检报告已读取</div>
+<div style="font-size:12px;color:#0C447C;display:flex;align-items:center;gap:8px;"><span>✓</span> 血常规数据已解析</div>
+<div style="font-size:12px;color:#185FA5;opacity:.7;display:flex;align-items:center;gap:8px;"><span style="animation:spin .8s linear infinite;display:inline-block;">⟳</span> 营养缺口分析中…</div>
+</div>
+<div style="height:4px;background:#B5D4F4;border-radius:2px;overflow:hidden;margin-top:12px;"><div style="width:68%;height:100%;background:#378ADD;border-radius:2px;"></div></div>
+<div style="font-size:10px;color:#185FA5;margin-top:4px;text-align:right;">68%</div>
+</div>
+<div style="font-size:12px;color:var(--t2);margin-bottom:12px;">方案生成后通知你，分析期间可先浏览餐厅</div>
+<div class="card"><div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:10px;">今日推荐 · 生成中</div><div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;"><div class="skel" style="width:56px;height:56px;border-radius:10px;flex-shrink:0;"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px;padding-top:4px;"><div class="skel" style="height:12px;width:65%;"></div><div class="skel" style="height:10px;width:40%;"></div></div></div><div style="display:flex;gap:10px;align-items:flex-start;"><div class="skel" style="width:56px;height:56px;border-radius:10px;flex-shrink:0;"></div><div style="flex:1;display:flex;flex-direction:column;gap:6px;padding-top:4px;"><div class="skel" style="height:12px;width:80%;"></div><div class="skel" style="height:10px;width:50%;"></div></div></div></div>
+<div style="text-align:center;font-size:12px;color:var(--t2);padding:4px 0 16px;">个性化推荐生成后自动更新</div>
+</div>
+</div>
+<div class="sc" id="em-norecord" style="min-height:520px;">
+<div class="scroll">
+<div class="greet"><div><div style="font-size:18px;font-weight:500;color:var(--t1);">早上好，张越 👋</div><div style="font-size:12px;color:var(--t2);margin-top:2px;">今天还没有饮食记录</div></div><div class="av bp">张</div></div>
+<div style="margin:0 16px 12px;padding:24px 16px;background:var(--bg2);border-radius:18px;border:0.5px solid var(--bd);text-align:center;"><div style="font-size:46px;margin-bottom:14px;opacity:.85;">🍽️</div><div style="font-size:15px;font-weight:500;color:var(--t1);margin-bottom:6px;">今天还没吃东西？</div><div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:18px;">记录第一餐，AI 开始追踪你的今日营养</div><div style="display:flex;gap:8px;"><button style="flex:1;padding:10px;background:var(--brand);color:white;border:none;border-radius:10px;font-size:12px;font-weight:500;cursor:pointer;">点外卖记录</button><button style="flex:1;padding:10px;background:white;color:var(--t1);border:0.5px solid var(--bd);border-radius:10px;font-size:12px;cursor:pointer;">手动添加</button></div></div>
+<div style="padding:0 16px;"><div class="sh" style="margin-top:0;"><h3>今日推荐早餐</h3><a>换一换</a></div></div>
+<div class="mh bp"><div class="mht">🥣</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">燕麦牛奶粥 + 水煮蛋</div><div style="font-size:11px;color:var(--brand);margin-top:2px;">轻食研究所 · 380 kcal</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">¥22</div><button class="ab bp" style="width:26px;height:26px;font-size:17px;">+</button></div></div>
+<div style="padding:0 16px;margin-top:12px;margin-bottom:20px;"><div class="nc bp"><div class="nci">📋</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">补充健康档案，让推荐更准</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">上传体检报告，营养师专属优化</div><div class="np"><div class="nf" style="width:30%;"></div></div></div><span style="font-size:16px;color:var(--t2);">›</span></div></div>
+</div>
+</div>
+<div class="sc" id="em-nofav" style="min-height:520px;">
+<div class="ph"><span class="pt">我收藏的餐厅</span></div>
+<div class="scroll">
+<div class="eh"><div class="ei">🏪</div><div style="font-size:17px;font-weight:500;color:var(--t1);margin-bottom:6px;">还没有收藏的餐厅</div><div style="font-size:13px;color:var(--t2);line-height:1.6;margin-bottom:24px;">在浏览时点击收藏<br>下次点餐直接找到它</div><button style="padding:11px 28px;background:var(--brand);color:white;border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;">去发现餐厅 →</button></div>
+<div style="padding:0 16px 20px;"><div class="sh" style="margin-top:4px;"><h3>猜你喜欢</h3></div>
+<div style="display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;"><div style="width:40px;height:40px;border-radius:10px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;">🥗</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">轻食研究所</div><div style="font-size:11px;color:var(--t2);margin-top:1px;">健康92分 · 28分钟</div></div><div style="font-size:20px;color:var(--t2);cursor:pointer;">🤍</div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;"><div style="width:40px;height:40px;border-radius:10px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;">🐟</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">清蒸小厨</div><div style="font-size:11px;color:var(--t2);margin-top:1px;">健康90分 · 35分钟</div></div><div style="font-size:20px;color:var(--t2);cursor:pointer;">🤍</div></div>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 审核等待 ══ -->
+<div class="mw" id="mod-audit">
+<div class="ml">审核等待 · 进度可视化</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on">
+<div class="ph"><span class="bk">‹</span><span class="pt">健康档案</span><span style="font-size:11px;padding:4px 10px;background:var(--warn-bg);color:var(--warn-text);border-radius:20px;border:0.5px solid var(--warn-border);">审核中</span></div>
+<div class="scroll" style="padding:12px 0 16px;">
+<div style="margin:0 16px 12px;background:#E6F1FB;border-radius:18px;padding:18px;border:0.5px solid #B5D4F4;">
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"><div style="width:44px;height:44px;border-radius:50%;background:#378ADD;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">👩‍⚕️</div><div><div style="font-size:14px;font-weight:500;color:#0C447C;">李营养师 · 审核中</div><div style="font-size:11px;color:#185FA5;margin-top:2px;">注册营养师 · 预计24小时内完成</div></div></div>
+<div style="display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:white;border-radius:10px;"><div style="width:28px;height:28px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:12px;color:white;flex-shrink:0;">✓</div><div style="flex:1;"><div style="font-size:12px;font-weight:500;color:#0C447C;">档案已上传</div><div style="font-size:10px;color:#185FA5;margin-top:1px;">体检报告 · 血常规化验单</div></div><div style="font-size:10px;color:#185FA5;">10分钟前</div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:white;border-radius:10px;"><div style="width:28px;height:28px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:12px;color:white;flex-shrink:0;">✓</div><div style="flex:1;"><div style="font-size:12px;font-weight:500;color:#0C447C;">AI 初步解读完成</div><div style="font-size:10px;color:#185FA5;margin-top:1px;">初始方案已生效</div></div><div style="font-size:10px;color:#185FA5;">刚才</div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:white;border-radius:10px;"><div style="width:28px;height:28px;border-radius:50%;background:#378ADD;display:flex;align-items:center;justify-content:center;font-size:12px;color:white;flex-shrink:0;animation:spin .8s linear infinite;">⟳</div><div style="flex:1;"><div style="font-size:12px;font-weight:500;color:#0C447C;">营养师人工复核</div><div style="font-size:10px;color:#185FA5;margin-top:1px;">李营养师正在审阅</div></div><div style="font-size:10px;color:#185FA5;">进行中</div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:white;border-radius:10px;opacity:.5;"><div style="width:28px;height:28px;border-radius:50%;background:#E6F1FB;border:1.5px solid #B5D4F4;display:flex;align-items:center;justify-content:center;font-size:12px;color:#378ADD;flex-shrink:0;">4</div><div style="flex:1;"><div style="font-size:12px;font-weight:500;color:#0C447C;">专属方案最终生效</div><div style="font-size:10px;color:#185FA5;margin-top:1px;">审核完成后推送通知</div></div><div style="font-size:10px;color:#185FA5;">待完成</div></div>
+</div>
+</div>
+<div style="margin:0 16px 10px;display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg2);border-radius:12px;border:0.5px solid var(--bd);"><div style="font-size:20px;flex-shrink:0;">🔔</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">审核完成时通知我</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">营养师审核完立即推送</div></div><div class="tgl bp" onclick="this.classList.toggle('off')"></div></div>
+<div style="margin:0 16px 10px;background:var(--bg);border:0.5px solid var(--bd);border-radius:14px;padding:12px 14px;">
+<div style="font-size:12px;font-weight:500;color:var(--t2);margin-bottom:8px;">审核期间临时方案已生效</div>
+<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--bd);"><span style="font-size:12px;color:var(--t2);">每日热量</span><span style="font-size:13px;font-weight:500;color:var(--t1);">1800 kcal</span></div>
+<div style="display:flex;justify-content:space-between;padding:5px 0;"><span style="font-size:12px;color:var(--t2);">方案状态</span><span style="font-size:12px;font-weight:500;color:#EF9F27;">临时方案（审核中）</span></div>
+</div>
+<div style="margin:0 16px;padding:10px 12px;background:var(--bg2);border-radius:10px;font-size:12px;color:var(--t2);line-height:1.6;">现在可以正常点餐使用，营养师复核完成后方案自动升级，无需你做任何操作。</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 消息中心 ══ -->
+<div class="mw" id="mod-notif">
+<div class="ml">消息中心 · 分类+行动入口</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on">
+<div class="ph"><span class="bk">‹</span><span class="pt">消息通知</span><span style="font-size:12px;color:var(--brand);cursor:pointer;margin-left:auto;">全部已读</span></div>
+<div style="display:flex;gap:6px;padding:10px 16px;border-bottom:0.5px solid var(--bd);overflow-x:auto;flex-shrink:0;">
+<div class="fc on">全部 <span style="display:inline-flex;align-items:center;justify-content:center;min-width:15px;height:15px;border-radius:8px;background:#E24B4A;font-size:9px;color:white;font-weight:500;padding:0 3px;margin-left:3px;">3</span></div>
+<div class="fc">营养师</div><div class="fc">健康提醒</div><div class="fc">家庭</div><div class="fc">订单</div>
+</div>
+<div class="scroll">
+<div style="padding:10px 16px 0;">
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:8px;letter-spacing:.3px;">今天</div>
+<div class="mi"><div class="mii" style="background:#E6F1FB;">👩‍⚕️</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:5px;"><div class="ud"></div>营养师审核完成</div><div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">李营养师已完成健康档案审核，新增低钠饮食建议，动物内脏已从推荐中移除。</div><div style="font-size:10px;color:var(--t2);margin-top:3px;">10分钟前</div><div style="font-size:11px;color:var(--brand);font-weight:500;margin-top:4px;cursor:pointer;">查看新方案 →</div></div></div>
+<div class="mi"><div class="mii" style="background:var(--warn-bg);">⚠️</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:5px;"><div class="ud"></div>今日钠摄入预警</div><div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">你今日钠摄入已达1840mg，接近上限。晚餐建议选择低钠菜品。</div><div style="font-size:10px;color:var(--t2);margin-top:3px;">下午 2:30</div><div style="font-size:11px;color:var(--brand);font-weight:500;margin-top:4px;cursor:pointer;">查看今日餐单 →</div></div></div>
+<div class="mi"><div class="mii" style="background:#EEEDFE;">👨‍👩‍👧</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);display:flex;align-items:center;gap:5px;"><div class="ud"></div>家庭动态</div><div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">奶奶今日血糖连续7天达标！妈妈本周体重下降0.8kg，目标达成40%。</div><div style="font-size:10px;color:var(--t2);margin-top:3px;">上午 11:00</div><div style="font-size:11px;color:var(--brand);font-weight:500;margin-top:4px;cursor:pointer;">查看家庭报告 →</div></div></div>
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin:12px 0 8px;letter-spacing:.3px;">昨天</div>
+<div class="mi"><div class="mii" style="background:var(--brand-light);">✅</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">订单已送达</div><div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.5;">轻食研究所订单已送达，饮食记录已自动同步，今日热量完成87%。</div><div style="font-size:10px;color:var(--t2);margin-top:3px;">昨天 12:45</div></div></div>
+<div class="mi"><div class="mii" style="background:var(--brand-light);">🏆</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">打卡里程碑</div><div style="font-size:12px;color:var(--t2);margin-top:3px;line-height:1.5;">恭喜！你已连续打卡10天，好习惯正在养成中！</div><div style="font-size:10px;color:var(--t2);margin-top:3px;">昨天 20:00</div></div></div>
+<div style="height:16px;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 订单历史 ══ -->
+<div class="mw" id="mod-orders">
+<div class="ml">订单历史 · 营养数据联通</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on">
+<div class="ph"><span class="bk">‹</span><span class="pt">订单记录</span></div>
+<div style="display:flex;gap:6px;padding:8px 16px;border-bottom:0.5px solid var(--bd);overflow-x:auto;flex-shrink:0;"><div class="fc on">全部</div><div class="fc">进行中</div><div class="fc">已完成</div></div>
+<div class="scroll">
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 16px 10px;">
+<div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;border:0.5px solid var(--bd);"><div style="font-size:17px;font-weight:500;color:var(--t1);">38</div><div style="font-size:10px;color:var(--t2);margin-top:2px;">累计订单</div></div>
+<div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;border:0.5px solid var(--bd);"><div style="font-size:17px;font-weight:500;color:var(--t1);">¥1,240</div><div style="font-size:10px;color:var(--t2);margin-top:2px;">累计消费</div></div>
+<div style="background:var(--bg2);border-radius:10px;padding:10px;text-align:center;border:0.5px solid var(--bd);"><div style="font-size:17px;font-weight:500;color:var(--t1);">86%</div><div style="font-size:10px;color:var(--t2);margin-top:2px;">营养达标率</div></div>
+</div>
+<div class="oc">
+<div class="och"><div><div style="font-size:13px;font-weight:500;color:var(--t1);">轻食研究所</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">今日 12:30 · #20240430</div></div><div style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--warn-bg);color:var(--warn-text);">配送中</div></div>
+<div class="ocb"><div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><span style="font-size:16px;flex-shrink:0;">🥗</span><span style="flex:1;font-size:12px;color:var(--t1);">藜麦鸡胸沙拉 × 1</span><span style="font-size:12px;color:var(--t2);">¥38</span></div><div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><span style="font-size:16px;flex-shrink:0;">🍲</span><span style="flex:1;font-size:12px;color:var(--t1);">冬瓜薏米汤 × 1</span><span style="font-size:12px;color:var(--t2);">¥28</span></div></div>
+<div class="ocf"><div style="font-size:12px;color:var(--t2);">合计 <strong style="color:var(--t1);">¥61</strong></div><div style="display:flex;gap:6px;"><div class="obt bp">追踪配送</div><div class="obt obp bp">联系骑手</div></div></div>
+</div>
+<div class="oc">
+<div class="och"><div><div style="font-size:13px;font-weight:500;color:var(--t1);">粒粒香健康便当</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">昨日 12:15 · #20240429</div></div><div style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--brand-light);color:var(--brand-dark);">已完成</div></div>
+<div class="ocb"><div style="display:flex;align-items:center;gap:8px;padding:4px 0;"><span style="font-size:16px;flex-shrink:0;">🍱</span><span style="flex:1;font-size:12px;color:var(--t1);">低盐鸡胸便当 × 1</span><span style="font-size:12px;color:var(--t2);">¥35</span></div><div class="ns"><div style="width:5px;height:5px;border-radius:50%;background:var(--brand);flex-shrink:0;"></div><div style="font-size:10px;color:var(--brand-dark);">已同步饮食记录 · 贡献 480 kcal · 蛋白质 38g</div></div></div>
+<div class="ocf"><div style="font-size:12px;color:var(--t2);">合计 <strong style="color:var(--t1);">¥35</strong></div><div style="display:flex;gap:6px;"><div class="obt bp">营养详情</div><div class="obt obp bp">再来一单</div></div></div>
+</div>
+<div style="height:16px;"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 特殊人群 ══ -->
+<div class="mw" id="mod-special">
+<div class="ml">特殊人群 · 孕妇/慢病专属</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div style="display:flex;gap:6px;padding:8px 16px;background:var(--bg2);border-bottom:0.5px solid var(--bd);flex-shrink:0;overflow-x:auto;">
+<div class="fc on" onclick="spS('preg',this)">🤰 孕妇</div><div class="fc" onclick="spS('chronic',this)">🏥 慢病</div>
+</div>
+<div class="sc on" id="sp-preg" style="min-height:520px;">
+<div style="padding:12px 16px 10px;border-bottom:0.5px solid var(--bd);">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div><div style="font-size:17px;font-weight:500;color:var(--t1);">李女士的孕期餐单</div><div style="font-size:12px;color:var(--t2);margin-top:2px;">营养师已审核 · 专属方案</div></div><div style="display:flex;border:0.5px solid var(--bd);border-radius:20px;overflow:hidden;"><div style="padding:5px 12px;font-size:11px;cursor:pointer;background:var(--brand);color:white;font-weight:500;">孕期</div><div style="padding:5px 12px;font-size:11px;cursor:pointer;color:var(--t2);">月子</div></div></div>
+<div style="display:flex;gap:5px;overflow-x:auto;"><div class="fc" style="border-color:var(--brand-pale);background:var(--brand-light);color:var(--brand-dark);">✓ 第8周</div><div class="fc on">第20周</div><div class="fc">第28周</div><div class="fc">第36周</div></div>
+</div>
+<div class="scroll" style="padding:12px 16px 16px;">
+<div style="background:var(--brand-light);border-radius:14px;padding:14px;margin-bottom:10px;border:0.5px solid var(--brand-pale);display:flex;align-items:center;gap:14px;"><div style="width:56px;height:56px;border-radius:50%;background:white;border:1.5px solid var(--brand-pale);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;"><div style="font-size:22px;line-height:1;">🍌</div><div style="font-size:10px;color:var(--brand);margin-top:2px;">25cm</div></div><div><div style="font-size:16px;font-weight:500;color:var(--brand-dark);">孕 20 周 · 第二孕期</div><div style="font-size:11px;color:var(--brand);margin-top:2px;">宝宝约300g，已能感受到胎动</div><div style="font-size:12px;color:var(--brand);margin-top:4px;line-height:1.4;">本周重点补充铁质和钙</div></div></div>
+<div style="padding:9px 12px;background:var(--warn-bg);border-radius:10px;margin-bottom:10px;border:0.5px solid var(--warn-border);display:flex;gap:8px;align-items:flex-start;"><div style="width:6px;height:6px;border-radius:50%;background:#EF9F27;flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--warn-text);line-height:1.5;"><strong>铁摄入偏低</strong>，今日仅达标62%，建议午餐选红肉或深绿色蔬菜</div></div>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+<div style="background:var(--bg2);border-radius:10px;padding:10px;border:0.5px solid var(--bd);"><div style="font-size:11px;color:var(--t2);">叶酸</div><div style="font-size:15px;font-weight:500;color:var(--t1);margin-top:2px;">380 <span style="font-size:10px;color:var(--t2);">μg</span></div><div style="font-size:10px;color:var(--t2);">目标400μg</div><div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:5px;"><div style="width:95%;height:100%;background:var(--brand);border-radius:2px;"></div></div></div>
+<div style="background:var(--bg2);border-radius:10px;padding:10px;border:0.5px solid var(--bd);"><div style="font-size:11px;color:var(--t2);">铁</div><div style="font-size:15px;font-weight:500;color:var(--t1);margin-top:2px;">16 <span style="font-size:10px;color:var(--t2);">mg</span></div><div style="font-size:10px;color:var(--t2);">目标25mg</div><div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-top:5px;"><div style="width:62%;height:100%;background:#EF9F27;border-radius:2px;"></div></div></div>
+</div>
+<div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:8px;">今日推荐</div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--brand-light);border-radius:14px;border:0.5px solid var(--brand-pale);margin-bottom:6px;"><div style="width:42px;height:42px;border-radius:8px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🥩</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">菠菜牛肉盖饭</div><div style="font-size:11px;color:var(--brand);margin-top:2px;">高铁补充 · 520 kcal</div></div><div style="flex-shrink:0;"><span class="lg gg">补铁首选</span></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--caution-bg);border-radius:14px;border:0.5px solid var(--caution-border);"><div style="width:42px;height:42px;border-radius:8px;background:white;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🌶️</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">麻辣香锅</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">含生食材 · 重辣</div></div><div style="flex-shrink:0;"><span class="lg gr">孕期谨慎选</span></div></div>
+</div>
+</div>
+<div class="sc" id="sp-chronic" style="min-height:520px;">
+<div style="padding:12px 16px 10px;border-bottom:0.5px solid var(--bd);">
+<div style="font-size:17px;font-weight:500;color:var(--t1);margin-bottom:10px;">王先生的慢病餐单</div>
+<div style="display:flex;gap:6px;overflow-x:auto;"><div class="fc on" id="dt-bp" onclick="dSw('bp',this)" style="background:#378ADD;color:white;border-color:#378ADD;">高血压</div><div class="fc" id="dt-dm" onclick="dSw('dm',this)">糖尿病</div><div class="fc" id="dt-gout" onclick="dSw('gout',this)">痛风</div></div>
+</div>
+<div class="scroll" style="padding:12px 16px 16px;">
+<div id="dp-bp"><div style="background:#E6F1FB;border-radius:14px;padding:14px;margin-bottom:10px;border:0.5px solid #B5D4F4;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:13px;font-weight:500;color:#0C447C;">今日血压记录</span><span class="lg gb">偏高</span></div><div style="display:flex;gap:8px;"><div style="flex:1;background:white;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;font-weight:500;color:#185FA5;">148</div><div style="font-size:10px;color:#185FA5;">收缩压</div><div style="font-size:10px;padding:2px 5px;background:var(--warn-bg);color:var(--warn-text);border-radius:4px;margin-top:3px;display:inline-block;">偏高</div></div><div style="flex:1;background:white;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;font-weight:500;color:#185FA5;">92</div><div style="font-size:10px;color:#185FA5;">舒张压</div><div style="font-size:10px;padding:2px 5px;background:var(--warn-bg);color:var(--warn-text);border-radius:4px;margin-top:3px;display:inline-block;">偏高</div></div><div style="flex:1;background:white;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;font-weight:500;color:#185FA5;">72</div><div style="font-size:10px;color:#185FA5;">心率</div><div style="font-size:10px;padding:2px 5px;background:var(--brand-light);color:var(--brand-dark);border-radius:4px;margin-top:3px;display:inline-block;">正常</div></div></div><div style="font-size:11px;color:#0C447C;margin-top:8px;line-height:1.4;">今天钠快够了，建议选低钠菜品</div></div></div>
+<div id="dp-dm" style="display:none;"><div style="background:var(--warn-bg);border-radius:14px;padding:14px;margin-bottom:10px;border:0.5px solid var(--warn-border);"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:13px;font-weight:500;color:var(--warn-text);">今日血糖记录</span><span class="lg gw">需关注</span></div><div style="display:flex;gap:8px;"><div style="flex:1;background:white;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;font-weight:500;color:var(--warn-text);">7.2</div><div style="font-size:10px;color:var(--warn-text);">空腹血糖</div><div style="font-size:10px;padding:2px 5px;background:var(--warn-bg);color:var(--warn-text);border-radius:4px;margin-top:3px;display:inline-block;">偏高</div></div><div style="flex:1;background:white;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;font-weight:500;color:#E24B4A;">9.8</div><div style="font-size:10px;color:var(--warn-text);">餐后2h</div><div style="font-size:10px;padding:2px 5px;background:var(--caution-bg);color:var(--caution-text);border-radius:4px;margin-top:3px;display:inline-block;">超标</div></div></div><div style="font-size:11px;color:var(--warn-text);margin-top:8px;line-height:1.4;">餐后血糖超标，建议减少精制碳水，以粗粮为主。</div></div></div>
+<div id="dp-gout" style="display:none;"><div style="background:#FAECE7;border-radius:14px;padding:14px;margin-bottom:10px;border:0.5px solid #F5C4B3;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><span style="font-size:13px;font-weight:500;color:#4A1B0C;">尿酸水平</span><span class="lg gr">偏高</span></div><div style="display:flex;gap:8px;"><div style="flex:1.5;background:white;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;font-weight:500;color:#993C1D;">480</div><div style="font-size:10px;color:#993C1D;">血尿酸 μmol/L</div><div style="font-size:10px;padding:2px 5px;background:var(--warn-bg);color:var(--warn-text);border-radius:4px;margin-top:3px;display:inline-block;">偏高</div></div><div style="flex:1;background:white;border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;font-weight:500;color:#993C1D;">2.1L</div><div style="font-size:10px;color:#993C1D;">今日饮水</div><div style="font-size:10px;padding:2px 5px;background:var(--brand-light);color:var(--brand-dark);border-radius:4px;margin-top:3px;display:inline-block;">达标</div></div></div></div></div>
+<div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:8px;">今日推荐</div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:0.5px solid var(--bd);border-radius:14px;"><div style="width:42px;height:42px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🍲</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);" id="dp-name">冬瓜薏米汤套餐</div><div style="font-size:11px;color:var(--t2);margin-top:2px;" id="dp-meta">低钠低嘌呤 · 380 kcal</div></div><div style="flex-shrink:0;"><span class="lg gg" id="dp-lbl">今日首选</span></div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 家庭账号 ══ -->
+<div class="mw" id="mod-family">
+<div class="ml">家庭账号 · 一键全家下单</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on">
+<div style="padding:12px 16px 10px;border-bottom:0.5px solid var(--bd);">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><div><div style="font-size:17px;font-weight:500;color:var(--t1);">张家的餐单</div><div style="font-size:12px;color:var(--t2);margin-top:2px;">4位家庭成员 · 今日一起下单</div></div><div style="padding:5px 10px;background:var(--brand-light);color:var(--brand-dark);border:0.5px solid var(--brand-pale);border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;">+ 添加成员</div></div>
+<div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;">
+<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;border:0.5px solid var(--brand);background:var(--brand-light);min-width:56px;"><div style="width:36px;height:36px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--brand-dark);">全</div><div style="font-size:11px;color:var(--brand-dark);font-weight:500;">全家</div></div>
+<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;border:0.5px solid var(--bd);min-width:56px;"><div style="width:36px;height:36px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#0C447C;">爸</div><div style="font-size:11px;color:var(--t2);">爸爸</div></div>
+<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;border:0.5px solid var(--bd);min-width:56px;"><div style="width:36px;height:36px;border-radius:50%;background:var(--warn-bg);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--warn-text);">妈</div><div style="font-size:11px;color:var(--t2);">妈妈</div></div>
+<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;border:0.5px solid var(--bd);min-width:56px;"><div style="width:36px;height:36px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--brand-dark);">我</div><div style="font-size:11px;color:var(--t2);">张越</div></div>
+<div style="flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 8px;border-radius:12px;border:0.5px solid var(--bd);min-width:56px;"><div style="width:36px;height:36px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:#3C3489;">奶</div><div style="font-size:11px;color:var(--t2);">奶奶</div></div>
+</div>
+</div>
+<div class="scroll" style="padding:12px 16px 16px;">
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px;">
+<div style="background:var(--bg2);border-radius:12px;padding:10px;border:0.5px solid var(--bd);cursor:pointer;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#0C447C;">爸</div><div><div style="font-size:12px;font-weight:500;color:var(--t1);">爸爸</div><div style="font-size:10px;color:var(--t2);">52岁</div></div></div><div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:4px;"><div style="width:72%;height:100%;background:#378ADD;border-radius:2px;"></div></div><div style="font-size:10px;color:var(--t2);">1440/2000 kcal</div><div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;"><span class="lg gb" style="font-size:9px;padding:1px 5px;">高血压</span><span class="lg gr" style="font-size:9px;padding:1px 5px;">痛风</span></div></div>
+<div style="background:var(--bg2);border-radius:12px;padding:10px;border:0.5px solid var(--bd);cursor:pointer;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><div style="width:28px;height:28px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#3C3489;">奶</div><div><div style="font-size:12px;font-weight:500;color:var(--t1);">奶奶</div><div style="font-size:10px;color:var(--t2);">74岁</div></div></div><div style="height:4px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:4px;"><div style="width:78%;height:100%;background:#7F77DD;border-radius:2px;"></div></div><div style="font-size:10px;color:var(--t2);">1170/1500 kcal</div><div style="display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;"><span class="lg" style="font-size:9px;padding:1px 5px;background:#EEEDFE;color:#26215C;border:0.5px solid #9B95DD;">中老年</span><span class="lg gw" style="font-size:9px;padding:1px 5px;">糖尿病</span></div></div>
+</div>
+<div style="font-size:13px;font-weight:500;color:var(--t1);margin-bottom:8px;">今晚各自推荐</div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="width:24px;height:24px;border-radius:50%;background:#E6F1FB;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#0C447C;flex-shrink:0;">爸</div><div style="font-size:12px;font-weight:500;color:var(--t1);">爸爸的晚餐</div><span class="lg gg" style="margin-left:auto;">低钠低嘌呤</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;margin-bottom:12px;"><div style="width:40px;height:40px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🍲</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">冬瓜薏米汤+杂粮饭</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">低钠低嘌呤 · 380 kcal</div></div><div style="flex-shrink:0;"><span class="lg gg">双病推荐</span></div></div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><div style="width:24px;height:24px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:#3C3489;flex-shrink:0;">奶</div><div style="font-size:12px;font-weight:500;color:var(--t1);">奶奶的晚餐</div><span class="lg gw" style="margin-left:auto;">低GI软烂</span></div>
+<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:0.5px solid var(--bd);border-radius:12px;"><div style="width:40px;height:40px;border-radius:8px;background:var(--warn-bg);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🥣</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">糙米粥+清炒豆腐</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">低GI易消化 · 460 kcal</div></div><div style="flex-shrink:0;"><span class="lg gg">控糖推荐</span></div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ══ 下单配送 ══ -->
+<div class="mw" id="mod-delivery">
+<div class="ml">下单配送 · 购物车→追踪→健康同步</div>
+<div class="phone">
+<div class="sb"><span>9:41</span><span>好好吃饭</span><span>●●●</span></div>
+<div class="sc on" id="del-cart">
+<div class="ph"><span class="bk">‹</span><span class="pt">购物车</span></div>
+<div class="scroll" style="padding:12px 16px 0;">
+<div class="card" style="margin-bottom:10px;">
+<div style="font-size:12px;font-weight:500;color:var(--t2);margin-bottom:10px;">轻食研究所 · 3件</div>
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--bd);"><div style="width:44px;height:44px;border-radius:8px;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🥗</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">藜麦鸡胸沙拉</div><span class="lg gg" style="margin-top:3px;display:inline-block;">✓ 挺适合你</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><div style="font-size:13px;font-weight:500;color:var(--t1);">¥38</div><div style="display:flex;align-items:center;gap:5px;"><div style="width:22px;height:22px;border-radius:50%;border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">−</div><div style="font-size:12px;font-weight:500;color:var(--t1);min-width:14px;text-align:center;">1</div><div style="width:22px;height:22px;border-radius:50%;border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">+</div></div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--bd);"><div style="width:44px;height:44px;border-radius:8px;background:#EAF3DE;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🍲</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">冬瓜薏米排毒汤</div><span class="lg gg" style="margin-top:3px;display:inline-block;">辅助降压</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><div style="font-size:13px;font-weight:500;color:var(--t1);">¥28</div><div style="display:flex;align-items:center;gap:5px;"><div style="width:22px;height:22px;border-radius:50%;border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">−</div><div style="font-size:12px;font-weight:500;min-width:14px;text-align:center;">1</div><div style="width:22px;height:22px;border-radius:50%;border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">+</div></div></div></div>
+<div style="display:flex;align-items:center;gap:10px;padding:9px 0;"><div style="width:44px;height:44px;border-radius:8px;background:var(--caution-bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🦐</div><div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:500;color:var(--t1);">鲜虾牛油果沙拉</div><span class="lg gr" style="margin-top:3px;display:inline-block;">尿酸高时少吃</span></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><div style="font-size:13px;font-weight:500;color:var(--t1);">¥48</div><div style="display:flex;align-items:center;gap:5px;"><div style="width:22px;height:22px;border-radius:50%;border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">−</div><div style="font-size:12px;font-weight:500;min-width:14px;text-align:center;">1</div><div style="width:22px;height:22px;border-radius:50%;border:0.5px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;">+</div></div></div></div>
+</div>
+<div style="padding:9px 12px;background:var(--warn-bg);border-radius:10px;border:0.5px solid var(--warn-border);margin-bottom:10px;display:flex;gap:8px;align-items:flex-start;"><div style="width:6px;height:6px;border-radius:50%;background:#EF9F27;flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--warn-text);line-height:1.5;">「鲜虾牛油果沙拉」嘌呤较高，<strong>今日不太建议</strong>，但选择权在你</div></div>
+<div style="background:var(--brand-light);border-radius:10px;padding:10px 12px;margin-bottom:10px;border:0.5px solid var(--brand-pale);"><div style="font-size:11px;font-weight:500;color:var(--brand-dark);margin-bottom:6px;">本单营养预估</div><div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:var(--brand);">总热量</span><span style="font-weight:500;color:var(--brand-dark);">1080 kcal</span></div><div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;"><span style="color:var(--brand);">嘌呤</span><span style="font-weight:500;color:var(--warn-text);">↑ 含高嘌呤食材</span></div></div>
+<div style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;"><span style="color:var(--t2);">餐品合计</span><span style="font-weight:500;color:var(--t1);">¥114</span></div>
+<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;"><span style="color:var(--t2);">配送费</span><span style="color:var(--brand);">免费</span></div>
+<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;"><span style="color:var(--t2);">会员优惠</span><span style="color:var(--brand);">−¥5</span></div>
+<div style="height:0.5px;background:var(--bd);margin:8px 0;"></div>
+<div style="display:flex;justify-content:space-between;font-size:15px;font-weight:500;padding:4px 0 14px;"><span>合计</span><span>¥109</span></div>
+<button class="cta bp" style="margin-top:0;" onclick="dS('tracking')">确认下单 · ¥109 →</button>
+<div style="height:16px;"></div>
+</div>
+</div>
+<div class="sc" id="del-tracking">
+<div class="ph"><span class="bk" onclick="dS('cart')">‹</span><span class="pt">订单追踪</span></div>
+<div class="scroll" style="padding:12px 16px 0;">
+<div style="background:var(--brand);border-radius:18px;padding:16px;margin-bottom:10px;text-align:center;"><div style="font-size:32px;font-weight:500;color:white;line-height:1;" id="del-cd">28:00</div><div style="font-size:12px;color:rgba(255,255,255,.8);margin-top:4px;">预计送达时间</div><div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:6px;">骑手已接单，正在取餐</div></div>
+<div class="card">
+<div style="font-size:12px;font-weight:500;color:var(--t2);margin-bottom:10px;">配送进度</div>
+<div style="display:flex;align-items:flex-start;gap:0;">
+<div style="display:flex;flex-direction:column;align-items:center;flex:1;"><div style="width:22px;height:22px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:white;">✓</div><div style="font-size:10px;margin-top:4px;text-align:center;color:var(--brand);font-weight:500;">已下单</div></div>
+<div style="flex:1;height:2px;background:var(--brand);margin-top:10px;"></div>
+<div style="display:flex;flex-direction:column;align-items:center;flex:1;"><div style="width:22px;height:22px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:white;">✓</div><div style="font-size:10px;margin-top:4px;text-align:center;color:var(--brand);font-weight:500;">备餐中</div></div>
+<div style="flex:1;height:2px;background:var(--brand);margin-top:10px;"></div>
+<div style="display:flex;flex-direction:column;align-items:center;flex:1;"><div style="width:22px;height:22px;border-radius:50%;background:var(--brand-mid);border:2px solid var(--brand);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500;color:white;">→</div><div style="font-size:10px;margin-top:4px;text-align:center;color:var(--brand);font-weight:500;">取餐中</div></div>
+<div style="flex:1;height:2px;background:var(--bg2);margin-top:10px;"></div>
+<div style="display:flex;flex-direction:column;align-items:center;flex:1;"><div style="width:22px;height:22px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--bd2);"></div><div style="font-size:10px;margin-top:4px;text-align:center;color:var(--t2);">配送中</div></div>
+<div style="flex:1;height:2px;background:var(--bg2);margin-top:10px;"></div>
+<div style="display:flex;flex-direction:column;align-items:center;flex:1;"><div style="width:22px;height:22px;border-radius:50%;background:var(--bg2);border:1.5px solid var(--bd2);"></div><div style="font-size:10px;margin-top:4px;text-align:center;color:var(--t2);">已送达</div></div>
+</div>
+</div>
+<div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg2);border-radius:14px;margin-bottom:10px;border:0.5px solid var(--bd);"><div style="width:40px;height:40px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">🛵</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--t1);">骑手 · 李师傅</div><div style="font-size:11px;color:var(--t2);margin-top:2px;">⭐4.9 · 已完成2841单</div></div><div style="padding:7px 14px;border:0.5px solid var(--bd2);border-radius:10px;font-size:12px;cursor:pointer;">📞 联系</div></div>
+<div style="padding:9px 12px;background:var(--brand-light);border-radius:10px;margin-bottom:10px;border:0.5px solid var(--brand-pale);display:flex;gap:8px;align-items:flex-start;"><div style="width:6px;height:6px;border-radius:50%;background:var(--brand);flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--brand-dark);line-height:1.5;">餐品送达后将<strong>自动同步到今日饮食记录</strong>，无需手动打卡</div></div>
+<button class="cta bp" style="margin-top:0;" onclick="dS('arrived')">模拟送达 →</button>
+<div style="height:16px;"></div>
+</div>
+</div>
+<div class="sc" id="del-arrived">
+<div class="scroll" style="padding:20px 16px 0;">
+<div style="text-align:center;margin-bottom:16px;"><div style="width:64px;height:64px;border-radius:50%;background:var(--brand-light);margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:26px;animation:pi .4s cubic-bezier(.22,.68,0,1.2);">✓</div><div style="font-size:18px;font-weight:500;color:var(--t1);margin-bottom:4px;">已送达，好好享用！</div><div style="font-size:13px;color:var(--t2);line-height:1.5;">饮食记录已自动同步</div></div>
+<div style="background:var(--brand-light);border-radius:14px;padding:14px;margin-bottom:10px;border:0.5px solid var(--brand-pale);">
+<div style="font-size:13px;font-weight:500;color:var(--brand-dark);margin-bottom:10px;display:flex;align-items:center;gap:6px;"><span>📊</span> 今日饮食记录已更新</div>
+<div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:5px 0;border-bottom:0.5px solid var(--brand-pale);"><span style="color:var(--brand);flex:1;">总热量</span><div style="flex:2;height:4px;background:var(--brand-pale);border-radius:2px;overflow:hidden;"><div style="width:77%;height:100%;background:var(--brand);border-radius:2px;"></div></div><span style="color:var(--brand-dark);font-weight:500;margin-left:6px;">1540 kcal</span></div>
+<div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:5px 0;border-bottom:0.5px solid var(--brand-pale);"><span style="color:var(--brand);flex:1;">蛋白质</span><div style="flex:2;height:4px;background:var(--brand-pale);border-radius:2px;overflow:hidden;"><div style="width:88%;height:100%;background:var(--brand);border-radius:2px;"></div></div><span style="color:var(--brand-dark);font-weight:500;margin-left:6px;">66g/75g</span></div>
+<div style="display:flex;align-items:center;gap:8px;font-size:11px;padding:5px 0;"><span style="color:var(--brand);flex:1;">嘌呤</span><div style="flex:2;height:4px;background:var(--brand-pale);border-radius:2px;overflow:hidden;"><div style="width:84%;height:100%;background:#EF9F27;border-radius:2px;"></div></div><span style="color:var(--warn-text);font-weight:500;margin-left:6px;">168mg</span></div>
+<div style="background:white;border-radius:10px;padding:10px 12px;margin-top:8px;"><div style="font-size:11px;color:var(--brand);margin-bottom:6px;">本餐已同步食物</div><div style="display:flex;gap:5px;flex-wrap:wrap;"><span class="lg gg" style="font-size:10px;padding:2px 7px;">藜麦·已记录</span><span class="lg gg" style="font-size:10px;padding:2px 7px;">鸡胸肉·已记录</span><span class="lg gg" style="font-size:10px;padding:2px 7px;">冬瓜·已记录</span></div></div>
+</div>
+<div style="padding:9px 12px;background:var(--warn-bg);border-radius:10px;margin-bottom:10px;border:0.5px solid var(--warn-border);display:flex;gap:8px;align-items:flex-start;"><div style="width:6px;height:6px;border-radius:50%;background:#EF9F27;flex-shrink:0;margin-top:4px;"></div><div style="font-size:12px;color:var(--warn-text);line-height:1.5;">今日嘌呤已达168mg，接近上限，晚餐建议选蔬菜类。</div></div>
+<button class="cta bp" style="margin-bottom:8px;margin-top:0;" onclick="dS('cart')">查看今日完整饮食记录 →</button>
+<button class="ctag bp" onclick="dS('cart')">返回首页</button>
+<div style="height:16px;"></div>
+</div>
+</div>
+</div>
+</div>
+
+</div><!-- end dw -->
+
+<!-- 全局评分弹层 -->
+<div id="gsb" onclick="gsC(event)">
+<div id="gss">
+<div class="gsh"></div>
+<div style="font-size:15px;font-weight:500;color:var(--t1);margin-bottom:3px;" id="gs-t">评分说明</div>
+<div style="font-size:12px;color:var(--t2);margin-bottom:14px;" id="gs-s">基于你的健康档案个性化计算</div>
+<div style="text-align:center;margin-bottom:16px;"><div style="font-size:42px;font-weight:500;line-height:1;" id="gs-n">92</div><div style="font-size:11px;color:var(--t2);margin-top:4px;">满分100 · 针对你个人，不是通用分</div></div>
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin-bottom:8px;letter-spacing:.3px;">评分组成</div>
+<div id="gs-d"></div>
+<div style="font-size:11px;font-weight:500;color:var(--t2);margin:10px 0 6px;">识别到的关键因素</div>
+<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px;" id="gs-tg"></div>
+<div style="font-size:11px;color:var(--t2);line-height:1.6;padding:10px 12px;background:var(--bg2);border-radius:8px;" id="gs-nt"></div>
+<button style="width:100%;padding:11px;background:var(--bg2);border:none;border-radius:12px;font-size:13px;color:var(--t2);cursor:pointer;margin-top:14px;" onclick="gsC()">我知道了</button>
+</div>
+</div>
+
+<div id="toast">已加入购物车 ✓</div>
+
+<script>
+var GD={
+r92:{t:'轻食研究所 · 健康评分说明',s:'基于本店菜品结构 + 你的健康档案',n:92,c:'#2BA76A',d:[{n:'营养匹配度',s:38,m:40,c:'#2BA76A',note:'本店菜品蛋白质充足，与你每日目标高度匹配'},{n:'健康禁忌',s:28,m:30,c:'#2BA76A',note:'极少含你的过敏原或禁忌食材'},{n:'烹饪方式',s:18,m:20,c:'#2BA76A',note:'以蒸、煮、凉拌为主，烹饪健康'},{n:'今日匹配度',s:8,m:10,c:'#6DCCA0',note:'今日午餐营养缺口与本店菜品匹配'}],tg:[{t:'低钠',c:'gg'},{t:'低嘌呤',c:'gg'},{t:'高蛋白',c:'gg'},{t:'蒸煮为主',c:'gg'}],nt:'分值反映本店菜品与你当前健康状态的匹配度，不代表绝对优劣，自由选择。'},
+r90:{t:'清蒸小厨 · 健康评分说明',s:'基于本店菜品结构 + 你的健康档案',n:90,c:'#2BA76A',d:[{n:'营养匹配度',s:36,m:40,c:'#2BA76A',note:'清淡低钠，富含优质蛋白'},{n:'健康禁忌',s:28,m:30,c:'#2BA76A',note:'菜品均以低嘌呤食材为主'},{n:'烹饪方式',s:20,m:20,c:'#2BA76A',note:'全部清蒸，满分'},{n:'今日匹配度',s:6,m:10,c:'#6DCCA0',note:'今日蛋白质略低，此店有助补充'}],tg:[{t:'低钠',c:'gg'},{t:'低嘌呤',c:'gg'},{t:'清蒸满分',c:'gg'},{t:'适合慢病',c:'gg'}],nt:'非常适合你当前的健康状态，是今日推荐中综合最均衡的选择之一。'},
+r45:{t:'川味传承火锅 · 健康评分说明',s:'基于本店菜品结构 + 你的健康档案',n:45,c:'#E85D4A',d:[{n:'营养匹配度',s:22,m:40,c:'#EF9F27',note:'菜品热量整体偏高，超出你的目标范围'},{n:'健康禁忌',s:8,m:30,c:'#E85D4A',note:'高钠、高嘌呤食材多，火锅汤底嘌呤极高'},{n:'烹饪方式',s:8,m:20,c:'#E85D4A',note:'重油重辣，消化负担较大'},{n:'今日匹配度',s:7,m:10,c:'#6DCCA0',note:'今日热量还有余量，偶尔吃一次影响不大'}],tg:[{t:'高嘌呤',c:'gr'},{t:'今天钠快够了',c:'gw'},{t:'重油重辣',c:'gw'},{t:'偶尔解馋',c:'gw'}],nt:'根据你的健康档案，不太建议频繁选择。偶尔解馋没问题，当天其他餐次尽量清淡来平衡。'},
+d92:{t:'藜麦鸡胸沙拉 · 分值说明',s:'轻食研究所 · 针对你的健康档案计算',n:92,c:'#2BA76A',d:[{n:'营养匹配度',s:38,m:40,c:'#2BA76A',note:'蛋白质38g，正好补充今日缺口；热量420kcal在午餐合理范围内'},{n:'健康禁忌',s:30,m:30,c:'#2BA76A',note:'不含你的任何禁忌食材，满分'},{n:'烹饪方式',s:18,m:20,c:'#2BA76A',note:'凉拌+烤制，低钠酱汁，健康'},{n:'今日匹配度',s:6,m:10,c:'#6DCCA0',note:'今日钠摄入已达60%，此菜低钠不会推高'}],tg:[{t:'✓ 挺适合你',c:'gg'},{t:'蛋白质满满',c:'gg'},{t:'低钠',c:'gg'},{t:'低GI',c:'gg'}],nt:'这道菜在四个维度均表现良好，是今日午餐的优质选择。最终还是你说了算 😊'},
+d68:{t:'照烧鸡腿饭 · 分值说明',s:'轻食研究所 · 针对你的健康档案计算',n:68,c:'#EF9F27',d:[{n:'营养匹配度',s:32,m:40,c:'#2BA76A',note:'蛋白质充足，但热量560kcal偏高'},{n:'健康禁忌',s:22,m:30,c:'#EF9F27',note:'照烧酱含糖约12g，对血糖管控有影响'},{n:'烹饪方式',s:8,m:20,c:'#EF9F27',note:'煎制+酱汁腌制，含糖和油脂'},{n:'今日匹配度',s:6,m:10,c:'#6DCCA0',note:'今日碳水略低，米饭有补充作用'}],tg:[{t:'高蛋白',c:'gg'},{t:'照烧酱含糖',c:'gw'},{t:'热量偏高',c:'gw'},{t:'煎制',c:'gw'}],nt:'整体不错，主要扣分在照烧酱的含糖量。今天还没吃甜食的话，偶尔吃一次完全没问题。'},
+d41:{t:'鲜虾牛油果沙拉 · 分值说明',s:'轻食研究所 · 针对你的健康档案计算',n:41,c:'#E85D4A',d:[{n:'营养匹配度',s:28,m:40,c:'#6DCCA0',note:'牛油果提供优质脂肪，营养搭配尚可'},{n:'健康禁忌',s:5,m:30,c:'#E85D4A',note:'鲜虾嘌呤约180mg，显著触发你的痛风预警，扣25分'},{n:'烹饪方式',s:8,m:20,c:'#EF9F27',note:'千岛酱含钠和热量较高'},{n:'今日匹配度',s:0,m:10,c:'#E85D4A',note:'今日嘌呤摄入已达78%，此菜会超上限'}],tg:[{t:'尿酸高时少吃',c:'gr'},{t:'今日不太建议',c:'gr'},{t:'好脂肪',c:'gg'},{t:'千岛酱含钠',c:'gw'}],nt:'⚠ 根据你的痛风档案和今日嘌呤，我们不建议今天选这道。但如果你特别想吃，选择权在你，我们只做提示。'}
+};
+function GS(key){
+  var d=GD[key];if(!d)return;
+  document.getElementById('gs-t').textContent=d.t;
+  document.getElementById('gs-s').textContent=d.s;
+  var ne=document.getElementById('gs-n');ne.textContent=d.n;ne.style.color=d.c;
+  document.getElementById('gs-d').innerHTML=d.d.map(function(dim){
+    var p=Math.round(dim.s/dim.m*100);
+    return '<div style="margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px;"><span style="font-size:12px;color:var(--t1);">'+dim.n+'</span><span style="font-size:12px;font-weight:500;color:'+dim.c+';">'+dim.s+' / '+dim.m+'</span></div><div class="dbg"><div class="dbf" style="width:'+p+'%;background:'+dim.c+';"></div></div><div style="font-size:11px;color:var(--t2);margin-top:3px;line-height:1.4;">'+dim.note+'</div></div>';
+  }).join('');
+  document.getElementById('gs-tg').innerHTML=d.tg.map(function(t){return '<span class="lg '+t.c+'" style="font-size:11px;padding:3px 8px;border-radius:20px;">'+t.t+'</span>';}).join('');
+  document.getElementById('gs-nt').textContent=d.nt;
+  document.getElementById('gsb').classList.add('show');
+}
+function gsC(e){if(!e||e.target===document.getElementById('gsb'))document.getElementById('gsb').classList.remove('show');}
+
+// 模块
+function SM(id,btn){
+  document.querySelectorAll('.mw').forEach(m=>m.classList.remove('on'));
+  document.querySelectorAll('.mb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('mod-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+}
+// 注册
+function OB(n){document.querySelectorAll('#mod-ob .sc').forEach(s=>s.classList.remove('on'));document.getElementById('ob'+n).classList.add('on');}
+function OS(el){el.closest('.og').querySelectorAll('.oo').forEach(o=>o.classList.remove('sel'));el.classList.add('sel');}
+function OG(el){el.closest('.gr2').querySelectorAll('.gb2').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');}
+function ONT(){var n=document.getElementById('ob-nt');n.classList.toggle('sel');if(n.classList.contains('sel'))document.querySelectorAll('#ob3 .tg').forEach(t=>t.classList.remove('sel'));}
+// 首页
+var hC={t:0,n:0};
+function hS(t){document.querySelectorAll('#mod-home .sc').forEach(s=>s.classList.remove('on'));document.getElementById('h-'+t).classList.add('on');}
+function hAC(btn,price){hC.t+=price;hC.n++;document.getElementById('h-ct').textContent='¥'+hC.t;document.getElementById('h-cs').textContent='已选'+hC.n+'件';document.getElementById('h-cn').textContent=hC.n;document.getElementById('h-cb').style.display='flex';btn.textContent='✓';btn.style.background='var(--bg2)';btn.style.color='var(--t2)';showT();}
+// 点外卖
+var rC={t:0,n:0};
+function rS(t){document.querySelectorAll('#mod-rest .sc').forEach(s=>s.classList.remove('on'));document.getElementById('r-'+t).classList.add('on');}
+function rAC(btn,price){rC.t+=price;rC.n++;document.getElementById('r-ct').textContent='¥'+rC.t;document.getElementById('r-cs').textContent='已选'+rC.n+'件';document.getElementById('r-cn').textContent=rC.n;document.getElementById('r-cb').style.display='flex';btn.textContent='✓';btn.style.background='var(--bg2)';btn.style.color='var(--t2)';showT();}
+// 搜索
+function SR(v){if(v.trim()){document.getElementById('sd').style.display='none';document.getElementById('sr').style.display='block';document.getElementById('sk').textContent=v;}else{document.getElementById('sd').style.display='block';document.getElementById('sr').style.display='none';}}
+function SS(kw){document.getElementById('si').value=kw;SR(kw);}
+function SC(){document.getElementById('si').value='';document.getElementById('sd').style.display='block';document.getElementById('sr').style.display='none';}
+// 空状态
+function emS(id,el){document.querySelectorAll('#mod-empty .sc').forEach(s=>s.classList.remove('on'));document.querySelectorAll('#mod-empty .fc').forEach(c=>c.classList.remove('on'));document.getElementById('em-'+id).classList.add('on');el.classList.add('on');}
+// 特殊人群
+function spS(id,el){document.querySelectorAll('#mod-special .sc').forEach(s=>s.classList.remove('on'));document.querySelectorAll('#mod-special .fc').forEach(c=>c.classList.remove('on'));document.getElementById('sp-'+id).classList.add('on');el.classList.add('on');}
+var DD={bp:{tab:'dt-bp',panel:'dp-bp',color:'#378ADD',name:'冬瓜薏米汤套餐',meta:'低钠低嘌呤 · 380 kcal',lbl:'今日首选',lc:'gg'},dm:{tab:'dt-dm',panel:'dp-dm',color:'#EF9F27',name:'糙米杂粮套餐',meta:'低GI控糖 · 360 kcal',lbl:'控糖推荐',lc:'gg'},gout:{tab:'dt-gout',panel:'dp-gout',color:'#D85A30',name:'南瓜粥+素炒时蔬',meta:'低嘌呤素食 · 340 kcal',lbl:'痛风友好',lc:'gg'}};
+function dSw(d,el){
+  Object.keys(DD).forEach(function(k){document.getElementById(DD[k].panel).style.display='none';var t=document.getElementById(DD[k].tab);t.classList.remove('on');t.style.background='';t.style.color='';t.style.borderColor='';});
+  document.getElementById(DD[d].panel).style.display='block';
+  el.classList.add('on');el.style.background=DD[d].color;el.style.color='white';el.style.borderColor=DD[d].color;
+  document.getElementById('dp-name').textContent=DD[d].name;
+  document.getElementById('dp-meta').textContent=DD[d].meta;
+  var l=document.getElementById('dp-lbl');l.textContent=DD[d].lbl;l.className='lg '+DD[d].lc;
+}
+// 配送
+var delT=null;
+function dS(t){document.querySelectorAll('#mod-delivery .sc').forEach(s=>s.classList.remove('on'));document.getElementById('del-'+t).classList.add('on');if(t==='tracking')startDel();else if(delT){clearInterval(delT);delT=null;}}
+function startDel(){if(delT)clearInterval(delT);var s=28*60;delT=setInterval(function(){s--;if(s<0){clearInterval(delT);return;}var m=Math.floor(s/60),sec=s%60;var el=document.getElementById('del-cd');if(el)el.textContent=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;},1000);}
+// Toast
+function showT(){var t=document.getElementById('toast');t.style.display='block';setTimeout(function(){t.style.display='none';},1200);}
+</script>
+</body>
+</html>
